@@ -67,9 +67,9 @@ function set_fields(field_name) {
 		request=new ActiveXObject('Microsoft.XMLHTTP');
 	}
 
-	//  Open and process the JSON file form_defaults.json
+	//  Open and process the JSON file defaults.json
 	
-	request.open('GET', '/_php/form_defaults.json');
+	request.open('GET', '/_json/defaults.json');
 
 	request.onreadystatechange = function() {
 		if ((request.status === 200) && (request.readyState === 4)) {

@@ -2,11 +2,11 @@
 ###############################################################################
 #  This simple sticky form processes default data used in the universal form
 #  processor form_processor.php. Default values are stored in a JSON file,
-#  form_defaults.json. Values are retrieved from the file before the form
+#  defaults.json. Values are retrieved from the file before the form
 #  is displayed.
 ###############################################################################
 
-$json_file = 'form_defaults.json';
+$json_file = '../_json/defaults.json';
 $submit_to = $form_id = $ok_url = $not_ok_url = $send_text_email = $append_to_file = "";
 $messages = array();
 
