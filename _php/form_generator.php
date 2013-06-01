@@ -6,9 +6,9 @@
 ###############################################################################
 
 //  Boilerplate HTML saved in include files
-$footer_file_name = "footer_inc.php";
-$header_file_name = "header_inc.php";
-$contact_info_file = "contact_info_inc.php";
+$footer_file_name = "_includes/footer_inc.php";
+$header_file_name = "_includes/header_inc.php";
+$contact_info_file = "_includes/contact_info_inc.php";
 
 //  Initialize form field values
 $file_name = $HTMLtitle = $form_header = $description = "";
