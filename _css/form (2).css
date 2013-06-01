@@ -1,0 +1,198 @@
+form  * {
+	background:transparent;
+}
+input[type=text], input[type=password],input[type=submit],input[type=email], input[type=url],input[type=tel],input[type=number], input[type=datetime],textarea,button  {
+	-webkit-appearance:none;
+	-moz-appearance:none;
+	border:none;
+	background:white;
+	-webkit-border-radius:0;
+	-moz-border-radius:0;
+	border-radius:0;
+	padding:5px;
+	margin:0;
+	margin-bottom:10px;
+}
+.group:before, .group:after {
+	content:"\0020";
+	display:block;
+	height:0;
+	overflow;hidden;
+}
+.group:after {
+	clear:both;
+}
+.group {
+	zoom:1;
+}
+body {
+	background: #dfe252;
+	background: -webkit-linear-gradient(#543019,#dfe252) no-repeat, #dfe252;
+	background: -moz-linear-gradient(#543019,#dfe252) no-repeat, #dfe252;
+	background: -ms-linear-gradient(#543019,#dfe252) no-repeat, #dfe252;
+	background: -o-linear-gradient(#543019,#dfe252) no-repeat, #dfe252;
+	background: linear-gradient(#543019,#dfe252) no-repeat, #dfe252;
+	filter:
+		progid:DXImageTransform.Microsoft.gradient( startColorstr='#543019',endColorstr='#dfe252',GradientType=0 );
+}
+#volform {
+	width:960px;
+	width:80%;
+	margin:0 auto;
+	max-width:700px;
+	min-width:300px;
+	background: #ddd;
+	padding-top:20px;
+	
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+
+	-webkit-box-shadow: 10px 10px 20px #20242c;
+	-moz-box-shadow: 10px 10px 20px #20242c;
+	box-shadow: 10px 10px 20px #20242c;
+}
+#volform h1 {
+	color: #3c3014;
+	font-size: 1.2em;
+	background: url(../_images/MCBCLogo2009_128.gif) no-repeat right top;
+	height:128px;
+	padding-right:163px;
+}
+fieldset {
+	border:none;
+	margin:0 35px;
+}
+legend {
+	display:none;
+}
+#volform ul {
+	margin:0;
+}
+#description {
+	padding:15px 35px 0 35px;
+}
+#shifts input[type=checkbox].full {
+	display:none;
+	color:red;
+	font-weight:bold;
+}
+#shifts li {
+	margin-left:54px;
+	list-style:none;
+}
+#shifts p.title {
+	margin-left:90px;
+	margin-top:1em;
+	font-size:1.1em;
+	color: #3c3014;
+}
+#contact li {
+	list-style:none;
+}
+
+/*  Align form elements horizontally  */
+#contact label {
+	position:absolute;
+}
+/* #contact label, #shifts input {
+	position:absolute;
+}
+ */
+#shifts label {
+	position:relative;
+	right:-35px;
+}
+#shifts input.full+label {
+	/* realign label repositioned by jQuery 'FULL!' insertion */
+	position:relative;
+	right:0px;	
+}
+/*  --------------------------------  */
+#contact input[type="text"],#contact input[type="email"] {
+
+	position:relative;
+	right:-60px;
+	width:200px;
+	width:80%;
+	min-width:200px;
+	border:1px solid #888;
+
+	-webkit-border-radius:7px;
+	-moz-border-radius:7px;
+	border-radius:7px;
+	
+}
+input[type=submit] {
+	width:80px;
+	width:20%;
+	min-width:80px;
+	height:24px;
+	float:right;
+	margin-right:10px;
+	margin-top:5px;
+	padding-bottom:5px;
+	border:0;
+	color:#fff;
+	font-weight:bold;
+	cursor:pointer;
+	
+	background: #778b25;
+	background:  -webkit-linear-gradient(#778b25,#3c4112);
+	background:  -moz-linear-gradient(#778b25,#3c4112);
+	background:  -ms-linear-gradient(#778b25,#3c4112);
+	background:  -o-linear-gradient(#778b25,#3c4112);
+	background:  linear-gradient(#778b25,#3c4112);
+	filter:
+		progid:DXImageTransform.Micros	oft.gradient( startColorstr='#466e82',endColorstr='#3c4112',GradientType=0 );
+
+	-webkit-border-radius:8px;
+	-moz-border-radius:8px;
+	border-radius:8px;
+
+	-webkit-box-shadow: 3px 3px 3px #20242c;
+	-moz-box-shadow: 3px 3px 3px #20242c;
+	box-shadow: 3px 3px 3px #20242c;
+}
+input[type=submit]:hover {
+	
+	background: #543019;
+	background:  -webkit-linear-gradient(#543019,#180e07);
+	background:  -moz-linear-gradient(#543019,#180e07);
+	background:  -ms-linear-gradient(#543019,#180e07);
+	background:  -o-linear-gradient(#543019,#180e07);
+	background:  linear-gradient(#543019,#180e07);
+	filter:
+		progid:DXImageTransform.Micros	oft.gradient( startColorstr='#543019',endColorstr='#180e07',GradientType=0 );
+
+	-webkit-box-shadow: 3px 3px 3px #20242c;
+	-moz-box-shadow: 3px 3px 3px #20242c;
+	box-shadow: 3px 3px 3px #20242c;
+}
+#volform input[type=submit] {
+	margin:50px 60px 20px 0;
+}
+@media only screen and (max-width:560px) {
+	body {
+		margin:5px;
+	}
+	#volform h1 {
+		background:none;
+		padding-right:0;
+		height:auto;
+	}
+	
+}
+@media only screen and (max-width:480px) {
+	
+	img {
+		display:none;
+	}
+	#volform {
+		width:100%;
+	}
+	li,#shifts li, #shifts p.title  {
+		margin-left:10px;
+		margin-right:10px;
+	}
+}

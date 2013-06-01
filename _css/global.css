@@ -1,0 +1,428 @@
+/*  
+ This files contains styling for upgrading the MCBC website to CSS-based layout using divs instead of tables
+ At this time, it contains styles for the basic page structure, including left and right side columns.
+*/
+		
+html,body {
+	margin: 0px;
+	padding: 0px;
+}
+body {
+	margin: 25px;
+	font-size: 100%;
+	font-family: Calibri, Arial, Helvetica, sans-serif;
+	background: #dfe252 url(/_images/Background.png) repeat-x;
+}
+#wrapper {
+	text-align: left;
+	margin: 0px auto;
+	background-color: white;
+	position: relative;
+	width: 1050px;
+	height: auto;
+}
+#logo {
+	margin: 0px;
+	padding: 0px 0px 15px;
+	height: 128px;
+	width: 163px;
+	background: url(/_images/MCBCLogo2009_128.gif) no-repeat;
+	position: absolute;
+	top: -65px;
+	left: 10px;
+}
+#leftSidebar {
+	width: 163px;
+	padding: 93px 10px 25px;
+	position: relative;
+	float: left;
+}
+#header {
+/* Turn off header background and sizing on responsive theme
+	background: #543019 url(/_images/headerBar.gif) no-repeat;
+	height: 60px;
+	width: 1050px;*/
+	background-color:#543019;
+	float: none;
+}
+#content {
+	width: 686px;
+	padding: 10px;
+	float: left;
+}
+
+#footer {
+	width: 1050px;
+	text-align: center;
+	font-size: 0.9em;
+	border-top: 1px solid #aaa;
+	text-align: center;
+	font-size: 0.8em;
+	white-space:nowrap;
+	clear: both;
+	background-color: #FFF;
+}
+#footer p {
+	text-align: center;
+	padding-bottom: 20px;
+}
+#rightSidebar {
+	background: white;
+	width: 141px;
+	float: right;
+	padding-top: 10px;
+}
+h1, h2, h3, h4, h5, h6, p, address, blockquote, ul, li, div {
+	margin: 0px;
+	padding: 0px;
+}
+p, h1, h2, h3, h4 {
+	margin-bottom: 1em;
+}
+h1,h2,h3,h4,dt {
+	color: #543019;
+	font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+}
+p {
+	font-size: 0.9em;
+	line-height: 1.6;
+}
+h1 {
+	text-align: center;
+	font-size: 1.6em;
+	font-weight: bold;
+}
+h2 {
+	text-align: center;
+	font-size: 1.4em;
+	font-weight: bold;
+}
+h3 {
+	font-size: 1.2em;
+	text-align: left;
+}
+h4 {
+	font-size: 1em;
+	text-align: left;
+	font-weight: bold;
+}
+blockquote {
+	margin-left: 3em;
+}
+#header h1,#header h2 {
+	color:white;
+	font-family:Calibri,Trebuchet MS,Arial,Helvetica,sans-serif;
+	line-height:1em;
+	text-align:left;	
+	font-weight:normal;
+	margin:5px 0 0 193px;
+}
+#header h1 {
+	text-transform:uppercase;
+	font-size:30px;
+	letter-spacing:1px;
+	padding-top:8px;
+}
+#header h2 {
+	font-style:italic;	
+	font-size:18px;
+	padding-bottom:8px;
+}
+
+a {
+	text-decoration: none;
+	border-bottom: 1px dashed #666;
+/*  SR@S color
+	color: #35450A; */
+/*  Previous color, amended upon inclusion of dashed underlining
+	font-weight: bold; */
+	color: #688813;
+}
+a:hover {
+	text-decoration: none;
+	border-bottom: 1px dashed #628413;
+	color: #543019;
+/*  From SR original prototype
+	color: #884F28; */
+}
+li {
+	font-size: 0.9em;
+	text-align: left;
+	line-height: 1.6em;
+	margin-left: 2em;
+}
+li li {
+	/* This property prevents the relative nature of
+	   the ems measure from shrinking nested lists */
+	font-size:1em;	
+}
+ul ul li {
+	margin-left: 4em;
+}
+
+ul {
+	margin-bottom: 1em;
+}
+img {
+	border: 0px;
+}
+.leftHalfPage {
+	float: left;
+	width: 49%;
+}
+.rightHalfPage {
+	float: right;
+	width: 49%;
+}
+.topRuledBlock {
+	clear: both;
+	height: auto;
+	width: 100%;
+	padding-top: 25px;
+	border-top: 3px ridge #333;
+	margin-top: 25px;
+}
+.center_paragraph {
+	text-align: center;
+}
+
+.right_aligned {
+	text-align: right;
+}
+.Left_just {
+	text-align: left;
+}
+.floatRight {
+	float: right;
+	padding: 10px;
+}
+.floatLeft {
+	float: left;
+	padding: 10px;
+}
+.pic300 {
+	float: right;
+	width: 320px;
+	padding: 10px;	
+}
+.pic250 {
+	float: right;
+	width: 270px;
+	padding: 10px;
+}
+
+.pic200 {
+	float: right;
+	width: 220px;
+	padding: 10px;
+}
+
+p.clear {
+	clear: both;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
+p.clearLeft {
+	clear: left;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
+h1.clear,h4.clear {
+	clear: both;
+}
+hr.clear {
+	clear: both;
+	margin-top: 10px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 0px;
+}
+.PhotoCaption {
+	font-size: 0.8em;
+	color: #666;
+	line-height: 1em;
+	padding: 0 20px;
+}
+.NoWrap {
+	white-space:nowrap;
+}
+.rightTable {
+	background-color: #ffc;
+	border: 4px ridge #543019;
+	margin: 10px;
+	padding: 10px;
+	float: right;
+	clear: right;
+}
+.rightTable p {
+	margin-bottom: 0;
+}
+#inbox {
+	background-color: #ffc;
+	border: 2px outset #543019;
+	margin: 10px;
+	padding: 10px;
+	width: 200px;
+	float: right;
+	font-family: Calibri, "Trebuchet MS", Verdana, Arial, sans-serif;
+	font-size: 0.9em;
+	line-height: 1.5em;
+}
+.Highlight {
+	background-color: #FF0;
+}
+.blue_table {
+	border: 2px;
+	border-color: #22497D;
+	background-color: #D1DFF2;
+	border-style: ridge;
+}
+.headline {
+	text-align: left;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+.LargeType {
+	font-size: 1em;
+	text-align: left;
+	font-weight: bold;
+}
+.MCBCGreen {
+	color: #35450a;
+}
+.TextStandard {
+	font-family: Calibri, Arial, Verdana, Helvetica, sans-serif;
+	font-size: .9em;
+	font-weight: normal;
+}
+.taller_line {
+	line-height: 2;
+}
+.blue_text {
+	color: #3378B7;
+}
+.DoubleSpace {
+	line-height: 2em;
+}
+.SpaceAfter {
+	margin-bottom: 1.5em;
+}
+.HalfSpaceAfter {
+	margin-bottom: .5em;
+}
+.indent_block {
+	padding: 0 100px 0 100px;
+}
+.replacementText {
+	font-style: italic;
+	color: #036;
+}
+
+ul#navBar, ul#sponsors {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#navBar li, #sponsors li {
+	padding: 0;
+	margin: 0;
+}
+#navBar a, #sponsors a {
+	display: block;
+	float: left;
+	height: 18px;
+	width: 140px;
+	margin: 0 0 10px 0;
+	padding: 0;
+	background-image: url(/_images/NavSprite.gif);
+}
+#sponsorLogos img {
+	float: left;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#navBar a.home { background-position: 0px 0px; }
+#navBar a.membership { background-position: 0px -18px; }
+#navBar a.campaigns { background-position: 0px -36px; }
+#navBar a.MTB { background-position: 0px -54px; }
+#navBar a.education { background-position: 0px -72px; }
+#navBar a.volunteer { background-position: 0px -90px; }
+#navBar a.resources { background-position: 0px -108px; }
+#navBar a.news { background-position: 0px -126px; }
+#navBar a.legislation { background-position: 0px -144px; }
+#navBar a.calendar { background-position: 0px -162px; }
+#navBar a.map { background-position: 0px -180px; }
+#navBar a.parking { background-position: 0px -198px; }
+#navBar a.about { background-position: 0px -216px; }
+#sponsors a { background-position: 0px -234px; margin-top: 10px; }
+
+#navBar a.home:hover { background-position: -140px 0px; }
+#navBar a.membership:hover { background-position: -140px -18px; }
+#navBar a.campaigns:hover { background-position: -140px -36px; }
+#navBar a.MTB:hover { background-position: -140px -54px; }
+#navBar a.education:hover { background-position: -140px -72px; }
+#navBar a.volunteer:hover { background-position: -140px -90px; }
+#navBar a.resources:hover { background-position: -140px -108px; }
+#navBar a.news:hover { background-position: -140px -126px; }
+#navBar a.legislation:hover { background-position: -140px -144px; }
+#navBar a.calendar:hover { background-position: -140px -162px; }
+#navBar a.map:hover { background-position: -140px -180px; }
+#navBar a.parking:hover { background-position: -140px -198px; }
+#navBar a.about:hover { background-position: -140px -216px; }
+#sponsors a:hover { background-position: -140px -234px; }
+
+#leftSidebar hr {
+	width: 140px;
+	clear: both;
+	float: left;
+	margin-left: 10px;
+}
+#leftSidebar a {
+	border-bottom-width: 0px;
+}
+
+#rightSidebar img,#rightSidebar form input[type=image] {
+	padding: 10px;
+}
+#rightSidebar hr {
+	width: 101px;
+	float: left;
+	margin-left: 10px;
+}
+#rightSidebar a {
+	border-bottom-width: 0px;
+}
+#rightSidebar a:hover {
+	margin: 0px;
+	padding: 0px;
+	border-width: 0px;
+}
+
+#sponsorLogos a { 
+	padding: 10px; 
+	border: 0 
+}
+
+#Share {
+	float: right;
+	width: 225px;
+	border-width: 0px;
+}
+#Share a {
+	border-bottom-width: 0px;
+}
+.redAccent {
+	font-weight: bold;
+	color: #F00;
+}
+.centerVertical {
+	margin-top: auto;
+	margin-bottom: auto;
+}
+#inbox p, #inbox h4 {
+	margin-bottom: 0px;
+}
