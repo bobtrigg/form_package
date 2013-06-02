@@ -1,2 +1,5 @@
 _json/
 _php/*.html
+_css/global.css
+_php/test.php
+_js/jquery*
