@@ -98,6 +98,3 @@ function set_fields(field_name) {
 	}
 	request.send();
 }
-
-
-

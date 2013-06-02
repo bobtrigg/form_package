@@ -26,7 +26,7 @@
 #    the default for unsuccessful execution is the sending form page.
 
 date_default_timezone_set('America/Los_Angeles');
-require_once ('file_names.inc');
+require_once ('../_includes/file_names_inc.php');
 
 ################################################################################
 # Define a function to process each field:
@@ -216,7 +216,8 @@ if (isset($ok_url) && ($ok_url != '')) {
 
 <!--  The following HTML will only be deployed if no forwarding page URL is provided.  -->
 
-<html>
+<!DOCTYPE html>
+<html lang=”en”>
 <head>
 <title>Bob Trigg's excellent PHP form processor</title>
 </head>

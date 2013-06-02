@@ -5,24 +5,60 @@
 #
 ###############################################################################
 
-//  Boilerplate HTML saved in include files
-$footer_file_name = "_includes/footer_inc.php";
-$header_file_name = "_includes/header_inc.php";
-$contact_info_file = "_includes/contact_info_inc.php";
+//  Find boilerplate HTML saved in include files
+require_once("../_includes/file_names_inc.php");
+$footer_file_name = FOOTER_FILE;
+$header_file_name = HEADER_FILE;
+$contact_info_file = CONTACT_FILE;
+$json_file = JSON_FILE;
 
 //  Initialize form field values
-$file_name = $HTMLtitle = $form_header = $description = "";
+$file_name = $HTMLtitle = $form_header = $description = $submit_to = "";
+$field_names = "Name,Email,Phone";
+
+if (file_exists($json_file) && is_readable($json_file)) {
+	
+	$json_data = nl2br(file_get_contents($json_file));
+	$data_array = json_decode($json_data,true);
+		
+	if (isset($data_array['submit_to'])) {
+		$submit_to = $data_array['submit_to'];
+	}
+}
 
 //  Set flags to indicate when to create unordered lists
 $open_ul = true;
 $close_ul = false;
 
+//  Set $num_lines, overwriting existing value according to this priority:
+//  Use value in URL if exists; if not use include file if it exists; if not use default
+
 $num_lines = 8;
+include("../_includes/defaults_inc.php");
+if (isset($_GET['num_lines']) && ($_GET['num_lines'] != '')) {
+	$num_lines = $_GET['num_lines'];
+}
 
 if (isset($_POST['submitted'])) {
 
 	if (isset($_POST['file_name']) && ($_POST['file_name'] != '')) {
 		$file_name = trim($_POST['file_name']);
+		$file_name = preg_replace('/ /','',$file_name);   // Remove spaces
+		$file_name = preg_replace('/\./','',$file_name);   // Remove periods
+
+		//  If string does not end in 'html', add '.html' at the end.
+
+		//  Standardize b4 search: if file name ends in 'htm', add an 'l'
+		if (preg_match('/htm$/i',$file_name)) {
+			$file_name .= 'l';
+		}
+		//  Now replace suffix delimiting period, removed above
+		if (preg_match('/html$/i',$file_name)) {
+			// preg_replace('/html/','.html',$file_name);  *** doesn't work!
+			$file_name = substr($file_name, 0, -4) . '.html';
+		} else {
+			$file_name .= '.html';
+		}
 	} else {
 		$file_name = "yourform.html";
 	}
@@ -36,8 +72,15 @@ if (isset($_POST['submitted'])) {
 	} else {
 		$form_header = "Data input form";
 	}
+	if (isset($_POST['submit_to']) && ($_POST['submit_to'] != '')) {
+		$submit_to = trim($_POST['submit_to']);
+	}
 	if (isset($_POST['description']) && ($_POST['description'] != '')) {
 		$description = trim(nl2br($_POST['description']));
+		//  Remove backslashes preceding a single quote
+		$description = preg_replace('/\\\\/','',$description);
+		//  Convert special characters to ampersand code:
+		$description = htmlentities($description);
 	}
 	
 	if (!file_exists($file_name) || (is_writable($file_name))) {
@@ -67,6 +110,7 @@ if (isset($_POST['submitted'])) {
 			if (isset($_POST['line_text' . $i]) && ($_POST['line_text' . $i] != '')) {
 			
 				$name_str = $_POST['line_text' . $i];
+				$stripped_name = preg_replace('/ /','_',$name_str);
 
 				if (isset($_POST['line_type' . $i]) && $_POST['line_type' . $i] == 'category') {
 				
@@ -77,6 +121,7 @@ if (isset($_POST['submitted'])) {
 				
 					fwrite($handle, "\n<p class=\"title\"><strong>" . $name_str . "</strong></p>\n");
 					$open_ul = true;
+					$cat_str = $stripped_name;
 				
 				} else {
 				
@@ -92,16 +137,33 @@ if (isset($_POST['submitted'])) {
 						$class_val = "";
 					}
 			
+					if ($cat_str != "") {
+						$complete_name = $cat_str . ":" . $stripped_name;
+					}
+			
 					fwrite($handle, "\n<li>\n");
-					fwrite($handle, "\t<input name=\"" . $name_str . "\" type=\"checkbox\" " . $class_val . " id=\"" . $name_str . "\">\n");
-					fwrite($handle, "\t<label for=\"" . $name_str . "\">" . $name_str . "</label>\n");
+					fwrite($handle, "\t<input name=\"" . $complete_name . "\" type=\"checkbox\" " . $class_val . " id=\"" . $complete_name . "\">\n");
+					fwrite($handle, "\t<label for=\"" . $complete_name . "\">" . $name_str . "</label>\n");
 					fwrite($handle, "</li>\n");	
+					
+					$field_names .= "," . $complete_name;
 				}
 			}
-
+		}
+		if ($close_ul) {
+			fwrite($handle,"</ul>\n");
 		}
 		
 		//  Create footer and close html file
+
+		$write_line = "<input type=\"HIDDEN\" name=\"form_id\" value=\"" . $HTMLtitle . "\">\n";
+		fwrite($handle,$write_line);
+		$write_line = "<input type=\"hidden\" name=\"Event\" id=\"Event\" value=\"" . $HTMLtitle . "\">\n";
+		fwrite($handle,$write_line);
+		
+		$write_line = "<input type=\"HIDDEN\" name=\"data_order\" value=\"" . $field_names . "\">\n";
+		fwrite($handle,$write_line);
+		
 		$footer_code = file_get_contents($footer_file_name);
 		fwrite($handle, $footer_code);
 		fclose($handle);
@@ -116,7 +178,8 @@ if (isset($_POST['submitted'])) {
 }
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang=”en”>
 <head>
 	<title>PHP Form Generator</title>
 	<link href="../_css/genform.css" rel="stylesheet" type="text/css">
@@ -166,7 +229,15 @@ if (isset($_POST['submitted'])) {
 		<label for="description">Description<br>
 		  <textarea name="description" id="description" cols="80" rows="5"></textarea>
 		</label>
-	</fieldset>
+
+	   <div class="inputField">
+            <div class="labelField">
+                <label for="form_header">Data recipient&apos;s email:</label>
+            </div>
+            <input name="submit_to" type="email" id="submit_to" size="50" value="<?php echo $submit_to;?>">
+        </div>
+
+		</fieldset>
 	
 	<fieldset id="shifts">
 

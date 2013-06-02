@@ -6,7 +6,9 @@
 #  is displayed.
 ###############################################################################
 
-$json_file = '../_json/defaults.json';
+require_once("../_includes/file_names_inc.php");
+
+$json_file = JSON_FILE;
 $submit_to = $form_id = $ok_url = $not_ok_url = $send_text_email = $append_to_file = "";
 $messages = array();
 
@@ -55,7 +57,7 @@ if (isset($_POST['submitted'])) {
 	}
 	
 	if (file_exists($json_file) && !is_writable($json_file)) {
-		$messages[] = "JSON file is not writable";
+		$messages[] = "JSON file is not writable; contact tech support";
 	} else {
 		if ($handle = fopen($json_file,'w')) {
 			fwrite($handle, json_encode($data_array));
@@ -86,13 +88,12 @@ if (file_exists($json_file)) {
 		isset($data_array['delimiter']) ? $delimiter = $data_array['delimiter'] : $delimiter = " ";
 		
 	} else {
-		echo "<h3>File is not readable</h3>";
+		$messages[] = "File is not readable; notify tech support";
 	}
-} else {
-	echo "<h3>File does not exist</h3>";
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang=”en”>
 <head>
 	<title>PHP Form Processor Initializer</title>
 	<link href="../_css/form.css" rel="stylesheet" type="text/css">
@@ -157,7 +158,7 @@ if (file_exists($json_file)) {
             <div class="labelField">
                 <label for="submit_to">Default email to send data to:</label>
             </div>
-            <input name="submit_to" type="text" id="submit_to" size="50" value="<?php echo $submit_to;?>">
+            <input name="submit_to" type="email" id="submit_to" size="50" value="<?php echo $submit_to;?>">
         </div>
 
         <div class="inputField">
@@ -171,14 +172,14 @@ if (file_exists($json_file)) {
             <div class="labelField">
                 <label for="ok_url">Default URL after form processing completes successfully:</label>
             </div>
-            <input name="ok_url" type="text" id="ok_url" size="80" value="<?php echo $ok_url;?>">
+            <input name="ok_url" type="url" id="ok_url" size="80" value="<?php echo $ok_url;?>">
         </div>
 
         <div class="inputField">
             <div class="labelField">
                 <label for="not_ok_url">Default URL after processing fails:</label>
             </div>
-            <input name="not_ok_url" type="text" id="not_ok_url" size="80" value="<?php echo $not_ok_url;?>">
+            <input name="not_ok_url" type="url" id="not_ok_url" size="80" value="<?php echo $not_ok_url;?>">
         </div>
 		
 		<div class="checkbox">
