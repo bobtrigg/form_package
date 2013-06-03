@@ -9,7 +9,7 @@
 <!-- jQuery to mark full shifts -->
 <script type="text/javascript">
 	$("document").ready( function () {
-		$("form :checkbox.full").before('<span style="color:red;font-weight:bold;position:relative;right:10px;">FULL!</span>');
+		$("form :checkbox.full").before('<span style="color:red;font-weight:bold;position:relative;right:12px;">FULL!</span>');
 	});
 </script>
 
@@ -18,6 +18,6 @@
 
 <body>
 
-<form method="post" action="/_php/FormProcessor.php" name="volform" id="volform">
+<form method="post" action="/_php/FormProcessor.php" name="mainform" id="mainform">
   <fieldset id="description" title="Description">
   <legend>Description</legend>

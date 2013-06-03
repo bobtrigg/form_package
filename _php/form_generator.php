@@ -12,6 +12,8 @@ $header_file_name = HEADER_FILE;
 $contact_info_file = CONTACT_FILE;
 $json_file = JSON_FILE;
 
+$messages = array();
+
 //  Initialize form field values
 $file_name = $HTMLtitle = $form_header = $description = $submit_to = "";
 $field_names = "Name,Email,Phone";
@@ -23,6 +25,9 @@ if (file_exists($json_file) && is_readable($json_file)) {
 		
 	if (isset($data_array['submit_to'])) {
 		$submit_to = $data_array['submit_to'];
+	}
+	if (isset($data_array['send_text_email'])) {
+		$send_text_email = $data_array['send_text_email'];
 	}
 }
 
@@ -39,8 +44,32 @@ if (isset($_GET['num_lines']) && ($_GET['num_lines'] != '')) {
 	$num_lines = $_GET['num_lines'];
 }
 
+//  Storage for individual line data
+//  Details of lines are stored in Detail objects.
+
+include_once("../_includes/detail_class.php");
+
+$detail_array = array();
+
+for ($i=0;$i<$num_lines;$i++) {
+	$detail_array[$i] = new Detail("","shift",false);
+}
+
+//  Process user-submitted data
+
 if (isset($_POST['submitted'])) {
 
+	//  If email is requested and no URL exists, do not process new form!
+	$email_exists = true;
+	if (isset($_POST['submit_to']) && ($_POST['submit_to'] != '')) {
+		$submit_to = trim($_POST['submit_to']);
+	} else {
+		if ($send_text_email == "Y") {
+			$email_exists = false;
+			$messages[] = "<h3>You must provide a data recipient email address!</h3>";
+		}
+	}
+	
 	if (isset($_POST['file_name']) && ($_POST['file_name'] != '')) {
 		$file_name = trim($_POST['file_name']);
 		$file_name = preg_replace('/ /','',$file_name);   // Remove spaces
@@ -71,9 +100,6 @@ if (isset($_POST['submitted'])) {
 		$form_header = trim($_POST['form_header']);
 	} else {
 		$form_header = "Data input form";
-	}
-	if (isset($_POST['submit_to']) && ($_POST['submit_to'] != '')) {
-		$submit_to = trim($_POST['submit_to']);
 	}
 	if (isset($_POST['description']) && ($_POST['description'] != '')) {
 		$description = trim(nl2br($_POST['description']));
@@ -110,6 +136,7 @@ if (isset($_POST['submitted'])) {
 			if (isset($_POST['line_text' . $i]) && ($_POST['line_text' . $i] != '')) {
 			
 				$name_str = $_POST['line_text' . $i];
+				$detail_array[$i-1]->set_text($name_str);
 				$stripped_name = preg_replace('/ /','_',$name_str);
 
 				if (isset($_POST['line_type' . $i]) && $_POST['line_type' . $i] == 'category') {
@@ -122,6 +149,7 @@ if (isset($_POST['submitted'])) {
 					fwrite($handle, "\n<p class=\"title\"><strong>" . $name_str . "</strong></p>\n");
 					$open_ul = true;
 					$cat_str = $stripped_name;
+					$detail_array[$i-1]->set_type('category');
 				
 				} else {
 				
@@ -133,8 +161,12 @@ if (isset($_POST['submitted'])) {
 				
 					if (isset($_POST['line_full' . $i]) && ($_POST['line_full' . $i] == 'on')) {
 						$class_val = "class=\"full\"";
+						// $full_array[$i-1] = true;
+						$detail_array[$i-1]->set_full(true); 
 					} else {
 						$class_val = "";
+						// $full_array[$i-1] = false;
+						$detail_array[$i-1]->set_full(false); 
 					}
 			
 					if ($cat_str != "") {
@@ -147,6 +179,7 @@ if (isset($_POST['submitted'])) {
 					fwrite($handle, "</li>\n");	
 					
 					$field_names .= "," . $complete_name;
+					$detail_array[$i-1]->set_type('shift');
 				}
 			}
 		}
@@ -156,6 +189,10 @@ if (isset($_POST['submitted'])) {
 		
 		//  Create footer and close html file
 
+		if (isset($submit_to) && ($submit_to != '')) {
+			$write_line = "<input type=\"HIDDEN\" name=\"submit_to\" value=\"" . $submit_to . "\">\n";
+			fwrite($handle,$write_line);
+		}
 		$write_line = "<input type=\"HIDDEN\" name=\"form_id\" value=\"" . $HTMLtitle . "\">\n";
 		fwrite($handle,$write_line);
 		$write_line = "<input type=\"hidden\" name=\"Event\" id=\"Event\" value=\"" . $HTMLtitle . "\">\n";
@@ -171,7 +208,8 @@ if (isset($_POST['submitted'])) {
 	} else {
 		echo "<h1>Copy failed</h1>";
 	}
-	if (!headers_sent($hdr_file_name, $linenum)) {
+	
+	if (!headers_sent($hdr_file_name, $linenum) && $email_exists) {
 		header("Location: " . $file_name);
 		exit();
 	}
@@ -227,7 +265,7 @@ if (isset($_POST['submitted'])) {
         </div>
 
 		<label for="description">Description<br>
-		  <textarea name="description" id="description" cols="80" rows="5"></textarea>
+		  <textarea name="description" id="description" cols="80" rows="5"><?php echo $description ?></textarea>
 		</label>
 
 	   <div class="inputField">
@@ -247,10 +285,10 @@ if (isset($_POST['submitted'])) {
 		
 			<div class="line_item"> 
 				<label for="line_text<?php echo $i ?>">Text:</label>
-				<input type="text" name="<?php echo "line_text" . $i ?>" id="<?php echo "line_text" . $i ?>" size="30" />
-				<input name="<?php echo "line_type" . $i ?>" type="radio" value="shift" checked="checked" />Shift
-				<input name="<?php echo "line_type" . $i ?>" type="radio" value="category" />Category
-				<input type="checkbox" name="<?php echo "line_full" . $i ?>" id="<?php echo "line_full" . $i ?>" />Full 
+				<input type="text" name="<?php echo "line_text" . $i ?>" id="<?php echo "line_text" . $i ?>" size="30" value="<?php echo $detail_array[$i-1]->get_text(); ?>" />
+				<input name="<?php echo "line_type" . $i ?>" type="radio" value="shift" <?php if ($detail_array[$i-1]->get_type() == 'shift') {echo "checked=\"checked\"";} ?> />Shift
+				<input name="<?php echo "line_type" . $i ?>" type="radio" value="category" <?php if ($detail_array[$i-1]->get_type() == 'category') {echo "checked=\"checked\"";} ?> />Category
+				<input type="checkbox" name="<?php echo "line_full" . $i ?>" id="<?php echo "line_full" . $i ?>" <?php if ($detail_array[$i-1]->get_full()) {echo "checked=\"checked\"";} ?> />Full 
 			</div>
 		
 		<?php } ?>

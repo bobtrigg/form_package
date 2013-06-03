@@ -130,12 +130,13 @@ input[type=submit] {
 	width:80px;
 	width:20%;
 	min-width:80px;
-	height:24px;
+	height:30px;
 	float:right;
 	margin:5px 83px 20px 0;
 	padding-bottom:5px;
 	border:0;
 	color:#fff;
+	font-size:1em;
 	font-weight:bold;
 	cursor:pointer;
 	
@@ -192,4 +193,3 @@ input[type=submit]:hover {
 		width:100%;
 	}
 }
-78

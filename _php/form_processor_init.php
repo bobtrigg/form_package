@@ -1,9 +1,9 @@
 <?php
 ###############################################################################
-#  This simple sticky form processes default data used in the universal form
-#  processor form_processor.php. Default values are stored in a JSON file,
-#  defaults.json. Values are retrieved from the file before the form
-#  is displayed.
+#  This simple sticky form gathers user-submitted default data used in the 
+#  universal form processor form_processor.php. 
+#  Default values are stored in a JSON file, defaults.json. 
+#  Existing values are retrieved from the file before the form is displayed.
 ###############################################################################
 
 require_once("../_includes/file_names_inc.php");
@@ -172,14 +172,14 @@ if (file_exists($json_file)) {
             <div class="labelField">
                 <label for="ok_url">Default URL after form processing completes successfully:</label>
             </div>
-            <input name="ok_url" type="url" id="ok_url" size="80" value="<?php echo $ok_url;?>">
+            <input name="ok_url" type="text" id="ok_url" size="80" value="<?php echo $ok_url;?>">
         </div>
 
         <div class="inputField">
             <div class="labelField">
                 <label for="not_ok_url">Default URL after processing fails:</label>
             </div>
-            <input name="not_ok_url" type="url" id="not_ok_url" size="80" value="<?php echo $not_ok_url;?>">
+            <input name="not_ok_url" type="text" id="not_ok_url" size="80" value="<?php echo $not_ok_url;?>">
         </div>
 		
 		<div class="checkbox">

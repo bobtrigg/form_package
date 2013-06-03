@@ -18,7 +18,7 @@ input[type=text], input[type=password],input[type=submit],input[type=email], inp
 	content:"\0020";
 	display:block;
 	height:0;
-	overflow;hidden;
+	overflow:hidden;
 }
 .group:after {
 	clear:both;
@@ -57,8 +57,9 @@ body {
 	color: #3c3014;
 	font-size: 1.4em;
 	text-align:center;
-	line-height:3em;
-/* 	background: url(../_images/MCBCLogo2009_128.gif) no-repeat right top;
+	height:25px;
+/* 	line-height:3em;
+	background: url(../_images/MCBCLogo2009_128.gif) no-repeat right top;
 	height:128px;
 	padding-right:163px;
  */
@@ -86,7 +87,7 @@ label {
 	margin:0;
 }
 #description {
-	padding:15px 35px 0 35px;
+	padding:15px 35px 15px 35px;
 }
 #shifts input[type=checkbox].full {
 	display:none;
@@ -100,6 +101,7 @@ label {
 #shifts p.title {
 	margin-left:90px;
 	margin-top:1em;
+	margin-bottom:.5em;
 	font-size:1.1em;
 	color: #3c3014;
 }
@@ -108,20 +110,33 @@ label {
 }
 
 /*  Align form elements horizontally  */
+#contact {
+	margin-bottom:0;
+	padding-bottom:0;
+}
 #contact label {
+	margin-left:25px;
+	width:8em;
 	position:absolute;
+}
+#contact input {
+	position:relative;
+	right:-35px;
+	top:-15px;
+	margin-bottom:5px;
+	width:70%;
 }
 #shifts label {
 	position:relative;
-	right:-35px;
+	right:30px;
 }
 #shifts input.full+label {
 	/* realign label repositioned by jQuery 'FULL!' insertion */
 	position:relative;
-	right:0px;	
+	right:55px;	
 }
 /*  --------------------------------  */
-input[type="text"],input[type="email"] {
+input[type="text"],input[type="email"],input[type="url"] {
 	width:200px;
 	width:80%;
 	min-width:200px;
@@ -131,10 +146,12 @@ input[type="text"],input[type="email"] {
 	-webkit-border-radius:7px;
 	-moz-border-radius:7px;
 	border-radius:7px;
-	
+}
+input[type="radio"] {
+	margin:10px 0 15px 45px;
 }
 input[type="checkbox"] {
-	margin:10px 0 0 45px;
+	margin:10px 0 0 0;
 	border:1px solid #888;
 
 	-webkit-border-radius:7px;
@@ -146,13 +163,14 @@ input[type=submit] {
 	width:80px;
 	width:20%;
 	min-width:80px;
-	height:24px;
+	height:30px;
 	float:right;
 	margin-right:10px;
 	margin-top:5px;
 	padding-bottom:5px;
 	border:0;
 	color:#fff;
+	font-size:1em;
 	font-weight:bold;
 	cursor:pointer;
 	

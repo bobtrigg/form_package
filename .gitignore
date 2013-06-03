@@ -3,3 +3,5 @@ _php/*.html
 _css/global.css
 _php/test.php
 _js/jquery*
+error_log
+readme
