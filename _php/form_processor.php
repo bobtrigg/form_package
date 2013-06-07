@@ -1,4 +1,5 @@
 <?php
+###############################################################################
 #  PHP Form Processor
 #  Created April, 2013 by Bob Trigg
 
@@ -8,7 +9,7 @@
 #  JavaScript array, or delimited.
 
 #  The script gets a list of data fields to be reported from a 
-#  hidden field in the form, field_names. Included in the package is 
+#  hidden field in the form, field_names. Included in this package is 
 #  a JavaScript file which parses a web page containing a form 
 #  and sets up the list of data fields in the form.
 	
@@ -25,94 +26,30 @@
 #  The default for successful execution is a simple message on this page;
 #    the default for unsuccessful execution is the sending form page.
 
+###############################################################################
+
 date_default_timezone_set('America/Los_Angeles');
+
 require_once ('../_includes/file_names_inc.php');
+require_once ('../_includes/process_field.php');  // Includes function to process each field
+require_once ('../_includes/functions.php');
 
-################################################################################
-# Define a function to process each field:
-# The function's single parameter is the name of the field to be processed.
-# Function uses the field name to retrieve the value from $_POST
-################################################################################
-function process_field($field_name,$send_text_email,$append_to_file,$handle,$first_field,$format="delim",$delimiter=",") {
-
-	global $e_body;
-	
-	$field_value = $_POST[$field_name];
-	
-	if ($send_text_email) {
-		
-		switch ($format) {
-			case "JSON":
-			case "JavaScript":
-				if (!$first_field) {
-					$e_body .= ",\n";
-				}
-				$name_value_pair = '"' . $field_name . '" : "' . $field_value . '"';
-				$e_body .=  $name_value_pair;
-				break;
-			case "delim":
-			default:
-				$name_value_pair = $field_name . $delimiter . $field_value . "\n";
-				$e_body .=  $name_value_pair;
-		}
-	}
-	
-	if ($append_to_file) {
-
-		//  Cases: JSON, JS, text
-		
-		switch ($format) {
-			case "JSON":
-			case "JavaScript":
-				if (!$first_field) {
-					fwrite($handle,",\n");
-				}
-				$name_value_pair = '"' . $field_name . '" : "' . $field_value . '"';
-				fwrite($handle, $name_value_pair);
-				break;
-			case "delim":
-			default:
-				$name_value_pair = $field_name . $delimiter . $field_value . "\n";
-				fwrite($handle, $name_value_pair);
-		}
-	}
-}
+$json_file = JSON_FILE;
+$field_names = $submit_to = $ok_url = $not_ok_url = $form_id = " ";
 
 # grab JSON data. This data may be overwritten by form data; any fields w/out values from form will assume JSON data
 
-if (file_exists(JSON_FILE) && is_readable(JSON_FILE)) {
-	
-	$json_data = nl2br(file_get_contents(JSON_FILE));
-	$data_array = json_decode($json_data,true);
-	
-	isset($data_array['submit_to']) ? $submit_to = $data_array['submit_to'] : $submit_to = " ";
-	isset($data_array['form_id']) ? $form_id = $data_array['form_id'] : $form_id = "";
-	isset($data_array['ok_url']) ? $ok_url = $data_array['ok_url'] : $ok_url = "";
-	isset($data_array['not_ok_url']) ? $not_ok_url = $data_array['not_ok_url'] : $not_ok_url = "";
-	isset($data_array['send_text_email']) ? $send_text_email = $data_array['send_text_email'] : $send_text_email = "";
-	isset($data_array['append_to_file']) ? $append_to_file = $data_array['append_to_file'] : $append_to_file = "";
-	isset($data_array['data_file_name']) ? $data_file_name = $data_array['data_file_name'] : $data_file_name = DEFAULT_DATA_FILE_NAME;
-	isset($data_array['format']) ? $format = $data_array['format'] : $format = "delim";
-	isset($data_array['delimiter']) ? $delimiter = $data_array['delimiter'] : $delimiter = ",";
+if (file_exists($json_file) && is_readable($json_file)) {	
+	require("../_includes/get_json_data.php");   // Logic to get and decode JSON data
 }
 
 # Put in the form-supplied data, which when present overrides the defaults
 
-if (isset($_POST['field_names']) && ($_POST['field_names'] != '')) {
-	$field_names = $_POST['field_names'];
-}
-if (isset($_POST['submit_to']) && ($_POST['submit_to'] != '')) {
-	$submit_to = $_POST['submit_to'];
-}
-if (isset($_POST['ok_url']) && ($_POST['ok_url'] != '')) {
-	$ok_url = $_POST['ok_url'];
-}
-if (isset($_POST['not_ok_url']) && ($_POST['not_ok_url'] != '')) {
-	$not_ok_url = $_POST['not_ok_url'];
-}
-if (isset($_POST['form_id']) && ($_POST['form_id'] != '')) {
-	$form_id = $_POST['form_id'];
-}
+$field_names = set_field('field_names',$field_names);
+$submit_to = set_field('submit_to',$submit_to);
+$ok_url = set_field('ok_url',$ok_url);
+$not_ok_url = set_field('not_ok_url',$not_ok_url);
+$form_id = set_field('form_id',$form_id);
 
 ####  Ready to rock! Start the data validation...
 

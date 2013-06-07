@@ -151,13 +151,15 @@ input[type="radio"] {
 	margin:10px 0 15px 45px;
 }
 input[type="checkbox"] {
-	margin:10px 0 0 0;
+	margin:10px 0 0 45px;
 	border:1px solid #888;
 
 	-webkit-border-radius:7px;
 	-moz-border-radius:7px;
 	border-radius:7px;
-	
+}
+#data_file_only {
+	margin-top:15px;
 }
 input[type=submit] {
 	width:80px;

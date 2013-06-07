@@ -1,8 +1,30 @@
 <?php
 ###############################################################################
 #
-#  To gen: HTML title <title>, page heading (<h1>), descrip (<p>), details
+#  form_generator.php
+#  Created by Bob Trigg, June 2013
 #
+#  This script uses user input from a form to generate a new form file. 
+#  Expected input includes the new file name, the page title, page header,
+#  a description (from a text box), the email address of the person to 
+#  receive emails when the new form is submitted, and detail lines.
+
+#  Each detail line on the new form will include a text label, possibly a checkbox,
+#  and possibly the word "FULL"! instead of the checkbox. This form contains
+#  a number of lines in which the user can enter that information. Note that the
+#  syntax is specific to the application for which this was written, but a 'category'
+#  does not get a checkbox, and a 'shift' does.
+
+#  Default values are stored in a JSON file, defaults.json, which can be set up with
+#  the program form_processor_init.php which came with this package. 
+
+#  Existing values are retrieved from the file before the form is displayed.
+#  After the user clicks 'Save' to submit the form, the new form is generated
+#  and the new form opens in the same window.
+
+#  This code is offered free; anyone using it has permission to alter it in
+#  any way useful to them.
+
 ###############################################################################
 
 //  Find boilerplate HTML saved in include files
@@ -20,15 +42,7 @@ $field_names = "Name,Email,Phone";
 
 if (file_exists($json_file) && is_readable($json_file)) {
 	
-	$json_data = nl2br(file_get_contents($json_file));
-	$data_array = json_decode($json_data,true);
-		
-	if (isset($data_array['submit_to'])) {
-		$submit_to = $data_array['submit_to'];
-	}
-	if (isset($data_array['send_text_email'])) {
-		$send_text_email = $data_array['send_text_email'];
-	}
+	require("../_includes/get_json_data.php");   // Logic to get and decode JSON data
 }
 
 //  Set flags to indicate when to create unordered lists
@@ -102,7 +116,7 @@ if (isset($_POST['submitted'])) {
 		$form_header = "Data input form";
 	}
 	if (isset($_POST['description']) && ($_POST['description'] != '')) {
-		$description = trim(nl2br($_POST['description']));
+		$description = trim($_POST['description']);
 		//  Remove backslashes preceding a single quote
 		$description = preg_replace('/\\\\/','',$description);
 		//  Convert special characters to ampersand code:

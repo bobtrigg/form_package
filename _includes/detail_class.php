@@ -1,4 +1,17 @@
 <?php
+###############################################################################
+#
+#  detail_class.php
+#  Created June 2013 by Bob Trigg (bobtrigg.com)
+#  
+#  This very simple class defines objects which store data from form input
+#  in script form_generator.php. Data stored is the text of a label in a form
+#  file to be generated, a indicator of the type of line, and a Boolean
+#  indicating whether the shift is full.
+#
+#  Getters and setters are provided for each property.
+#
+###############################################################################
 
 class Detail {
 
@@ -33,6 +46,4 @@ class Detail {
 		return $this->full;
 	}
 }
-
-
 ?>
