@@ -32,18 +32,20 @@ date_default_timezone_set('America/Los_Angeles');
 
 require_once ('../_includes/file_names_inc.php');
 require_once ('../_includes/process_field.php');  // Includes function to process each field
-require_once ('../_includes/functions.php');
+require_once("../_includes/functions.php");
+require_once("../_classes/json_class.php");
 
 $json_file = JSON_FILE;
-$field_names = $submit_to = $ok_url = $not_ok_url = $form_id = " ";
 
 # grab JSON data. This data may be overwritten by form data; any fields w/out values from form will assume JSON data
 
-list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = get_json_data($json_file);
+$json_object = new JSON_Data($json_file);
+
+list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = $json_object->get_json_data($json_file);
 
 # Put in the form-supplied data, which when present overrides the defaults
 
-$field_names = set_field('field_names',$field_names);
+$field_names = set_field('field_names'," ");
 $submit_to = set_field('submit_to',$submit_to);
 $ok_url = set_field('ok_url',$ok_url);
 $not_ok_url = set_field('not_ok_url',$not_ok_url);

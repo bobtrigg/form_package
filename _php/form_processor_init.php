@@ -13,6 +13,7 @@
 
 require_once("../_includes/file_names_inc.php");
 require_once("../_includes/functions.php");
+require_once("../_classes/json_class.php");
 
 $json_file = JSON_FILE;
 
@@ -58,7 +59,9 @@ if (isset($_POST['submitted'])) {
 
 //  Read JSON file and populate form field variables
 
-list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = get_json_data($json_file);
+$json_object = new JSON_Data($json_file);
+
+list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = $json_object->get_json_data($json_file);
 
 if (file_exists($json_file) && !is_readable($json_file)) {
 	$messages[] = "Existing data file is not readable; notify tech support";
