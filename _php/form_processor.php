@@ -39,9 +39,7 @@ $field_names = $submit_to = $ok_url = $not_ok_url = $form_id = " ";
 
 # grab JSON data. This data may be overwritten by form data; any fields w/out values from form will assume JSON data
 
-if (file_exists($json_file) && is_readable($json_file)) {	
-	require("../_includes/get_json_data.php");   // Logic to get and decode JSON data
-}
+list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = get_json_data($json_file);
 
 # Put in the form-supplied data, which when present overrides the defaults
 

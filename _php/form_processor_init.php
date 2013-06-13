@@ -17,7 +17,7 @@ require_once("../_includes/functions.php");
 $json_file = JSON_FILE;
 
 //  Set default values
-$submit_to = $form_id = $ok_url = $not_ok_url = $send_text_email = $append_to_file = "";
+$submit_to = $form_id = $ok_url = $not_ok_url = $send_text_email = $append_to_file = $data_file_name = "";
 $format = "delim";
 $delimiter = ',';
 
@@ -34,8 +34,8 @@ if (isset($_POST['submitted'])) {
 	$submit_to = $data_array['submit_to'] = set_field('submit_to',$submit_to);
 	$form_id = $data_array['form_id'] = set_field('form_id',$form_id);
 	$ok_url = $data_array['ok_url'] = set_field('ok_url',$ok_url);
-	$not_ok_url = $data_array['not_ok_url'] = set_field('not_ok_url',$not_ok_ur);
-	$send_text_email = $data_array['send_text_email'] = set_field('send_text_email',send_text_email);
+	$not_ok_url = $data_array['not_ok_url'] = set_field('not_ok_url',$not_ok_url);
+	$send_text_email = $data_array['send_text_email'] = set_field('send_text_email',$send_text_email);
 	$append_to_file = $data_array['append_to_file'] = set_field('append_to_file',$append_to_file);
 	$data_file_name = $data_array['data_file_name'] = set_field('data_file_name',$data_file_name);
 	$format = $data_array['format'] = set_field('format',$format);
@@ -58,14 +58,10 @@ if (isset($_POST['submitted'])) {
 
 //  Read JSON file and populate form field variables
 
-if (file_exists($json_file)) {
-	if (is_readable($json_file)) {
-	
-		require("../_includes/get_json_data.php");   // Logic to get and decode JSON data
+list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = get_json_data($json_file);
 
-	} else {
-		$messages[] = "File is not readable; notify tech support";
-	}
+if (file_exists($json_file) && !is_readable($json_file)) {
+	$messages[] = "Existing data file is not readable; notify tech support";
 }
 ?>
 <!DOCTYPE html>
