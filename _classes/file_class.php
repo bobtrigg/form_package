@@ -2,7 +2,7 @@
 
 class File {
 
-	protected $file_name;
+	protected $file_name = " ";
 	protected $handle;
 	
 	function set_file_name($file_name) {
