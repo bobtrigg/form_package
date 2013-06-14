@@ -13,7 +13,7 @@
 #  and possibly the word "FULL"! instead of the checkbox. This form contains
 #  a number of lines in which the user can enter that information. Note that the
 #  syntax is specific to the application for which this was written, but a 'category'
-#  does not get a checkbox, and a 'shift' does.
+#  does not get a checkbox, and a 'checkbox' does.
 
 #  Default values are stored in a JSON file, defaults.json, which can be set up with
 #  the program form_processor_init.php which came with this package. 
@@ -27,8 +27,31 @@
 
 ###############################################################################
 
+//  Functions used in this script file
+
+function set_num_lines() {
+
+	//  Set $num_lines, according to this priority:
+	//    1) use value in URL if exists
+	//    2) otherwise use include file if it exists
+	//    3) otherwise use hard-coded default
+
+	$num_lines = 8;
+	
+	include("../_includes/defaults_inc.php");
+	
+	if (isset($_GET['num_lines']) && ($_GET['num_lines'] != '')) {
+		$num_lines = $_GET['num_lines'];
+	}
+	
+	return $num_lines;
+}
+
+require_once("../_includes/base_pack.php");
+require_once("../_classes/detail_class.php");
+
 //  Find boilerplate HTML saved in include files
-require_once("../_includes/file_names_inc.php");
+
 $footer_file_name = FOOTER_FILE;
 $header_file_name = HEADER_FILE;
 $contact_info_file = CONTACT_FILE;
@@ -40,33 +63,24 @@ $messages = array();
 $file_name = $HTMLtitle = $form_header = $description = $submit_to = "";
 $field_names = "Name,Email,Phone";
 
-if (file_exists($json_file) && is_readable($json_file)) {
-	
-	require("../_includes/get_json_data.php");   // Logic to get and decode JSON data
-}
+$num_lines = set_num_lines();
+
+//  Instantiate JSON file object and get data from it
+$json_object = new JSON_Data($json_file);
+
+list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = $json_object->get_json_data($json_file);
 
 //  Set flags to indicate when to create unordered lists
 $open_ul = true;
 $close_ul = false;
 
-//  Set $num_lines, overwriting existing value according to this priority:
-//  Use value in URL if exists; if not use include file if it exists; if not use default
-
-$num_lines = 8;
-include("../_includes/defaults_inc.php");
-if (isset($_GET['num_lines']) && ($_GET['num_lines'] != '')) {
-	$num_lines = $_GET['num_lines'];
-}
-
 //  Storage for individual line data
 //  Details of lines are stored in Detail objects.
-
-include_once("../_includes/detail_class.php");
 
 $detail_array = array();
 
 for ($i=0;$i<$num_lines;$i++) {
-	$detail_array[$i] = new Detail("","shift",false);
+	$detail_array[$i] = new Detail("","checkbox",false);
 }
 
 //  Process user-submitted data
@@ -105,22 +119,27 @@ if (isset($_POST['submitted'])) {
 	} else {
 		$file_name = "yourform.html";
 	}
+	
 	if (isset($_POST['HTMLtitle']) && ($_POST['HTMLtitle'] != '')) {
 		$HTMLtitle = trim($_POST['HTMLtitle']);
+		$HTMLtitle = preg_replace('/\\\\/','',$HTMLtitle);
 	} else {
 		$HTMLtitle = "Working title";
 	}
+	
 	if (isset($_POST['form_header']) && ($_POST['form_header'] != '')) {
 		$form_header = trim($_POST['form_header']);
+		$form_header = preg_replace('/\\\\/','',$form_header);
 	} else {
 		$form_header = "Data input form";
 	}
+
 	if (isset($_POST['description']) && ($_POST['description'] != '')) {
-		$description = trim($_POST['description']);
+		$description = trim(nl2br($_POST['description']));
 		//  Remove backslashes preceding a single quote
 		$description = preg_replace('/\\\\/','',$description);
 		//  Convert special characters to ampersand code:
-		$description = htmlentities($description);
+		// $description = htmlentities($description);
 	}
 	
 	if (!file_exists($file_name) || (is_writable($file_name))) {
@@ -151,7 +170,10 @@ if (isset($_POST['submitted'])) {
 			
 				$name_str = $_POST['line_text' . $i];
 				$detail_array[$i-1]->set_text($name_str);
-				$stripped_name = preg_replace('/ /','_',$name_str);
+
+				// Remove "bad characters", comma and space
+				$bad_chars = array(",", " ");
+				$stripped_name = str_replace($bad_chars, "", $name_str);
 
 				if (isset($_POST['line_type' . $i]) && $_POST['line_type' . $i] == 'category') {
 				
@@ -162,7 +184,7 @@ if (isset($_POST['submitted'])) {
 				
 					fwrite($handle, "\n<p class=\"title\"><strong>" . $name_str . "</strong></p>\n");
 					$open_ul = true;
-					$cat_str = $stripped_name;
+					$,. = $stripped_name;
 					$detail_array[$i-1]->set_type('category');
 				
 				} else {
@@ -175,16 +197,16 @@ if (isset($_POST['submitted'])) {
 				
 					if (isset($_POST['line_full' . $i]) && ($_POST['line_full' . $i] == 'on')) {
 						$class_val = "class=\"full\"";
-						// $full_array[$i-1] = true;
 						$detail_array[$i-1]->set_full(true); 
 					} else {
 						$class_val = "";
-						// $full_array[$i-1] = false;
 						$detail_array[$i-1]->set_full(false); 
 					}
 			
 					if ($cat_str != "") {
 						$complete_name = $cat_str . ":" . $stripped_name;
+					} else {
+						$complete_name = $stripped_name;
 					}
 			
 					fwrite($handle, "\n<li>\n");
@@ -193,7 +215,7 @@ if (isset($_POST['submitted'])) {
 					fwrite($handle, "</li>\n");	
 					
 					$field_names .= "," . $complete_name;
-					$detail_array[$i-1]->set_type('shift');
+					$detail_array[$i-1]->set_type('checkbox');
 				}
 			}
 		}
@@ -279,7 +301,7 @@ if (isset($_POST['submitted'])) {
         </div>
 
 		<label for="description">Description<br>
-		  <textarea name="description" id="description" cols="80" rows="5"><?php echo $description ?></textarea>
+		  <textarea name="description" id="description" cols="80" rows="5"><?php echo $description; ?></textarea>
 		</label>
 
 	   <div class="inputField">
@@ -291,7 +313,7 @@ if (isset($_POST['submitted'])) {
 
 		</fieldset>
 	
-	<fieldset id="shifts">
+	<fieldset id="checkboxes">
 
 		<?php
 			for ($i=1;$i<=$num_lines;$i++) {
@@ -300,7 +322,7 @@ if (isset($_POST['submitted'])) {
 			<div class="line_item"> 
 				<label for="line_text<?php echo $i ?>">Text:</label>
 				<input type="text" name="<?php echo "line_text" . $i ?>" id="<?php echo "line_text" . $i ?>" size="30" value="<?php echo $detail_array[$i-1]->get_text(); ?>" />
-				<input name="<?php echo "line_type" . $i ?>" type="radio" value="shift" <?php if ($detail_array[$i-1]->get_type() == 'shift') {echo "checked=\"checked\"";} ?> />Shift
+				<input name="<?php echo "line_type" . $i ?>" type="radio" value="checkbox" <?php if ($detail_array[$i-1]->get_type() == 'checkbox') {echo "checked=\"checked\"";} ?> />Checkbox
 				<input name="<?php echo "line_type" . $i ?>" type="radio" value="category" <?php if ($detail_array[$i-1]->get_type() == 'category') {echo "checked=\"checked\"";} ?> />Category
 				<input type="checkbox" name="<?php echo "line_full" . $i ?>" id="<?php echo "line_full" . $i ?>" <?php if ($detail_array[$i-1]->get_full()) {echo "checked=\"checked\"";} ?> />Full 
 			</div>
