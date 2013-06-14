@@ -27,28 +27,11 @@
 
 ###############################################################################
 
-//  Functions used in this script file
-
-function set_num_lines() {
-
-	//  Set $num_lines, according to this priority:
-	//    1) use value in URL if exists
-	//    2) otherwise use include file if it exists
-	//    3) otherwise use hard-coded default
-
-	$num_lines = 8;
-	
-	include("../_includes/defaults_inc.php");
-	
-	if (isset($_GET['num_lines']) && ($_GET['num_lines'] != '')) {
-		$num_lines = $_GET['num_lines'];
-	}
-	
-	return $num_lines;
-}
-
 require_once("../_includes/base_pack.php");
 require_once("../_classes/detail_class.php");
+require_once("../_classes/form_class.php");
+require_once("../_classes/file_class.php");
+require_once("../_includes/form_functions.php");
 
 //  Find boilerplate HTML saved in include files
 
@@ -85,8 +68,11 @@ for ($i=0;$i<$num_lines;$i++) {
 
 //  Process user-submitted data
 
+
+$messages[] = "Is the submit recognized?";
 if (isset($_POST['submitted'])) {
 
+$messages[] = "Yes!";
 	//  If email is requested and no URL exists, do not process new form!
 	$email_exists = true;
 	if (isset($_POST['submit_to']) && ($_POST['submit_to'] != '')) {
@@ -98,27 +84,10 @@ if (isset($_POST['submitted'])) {
 		}
 	}
 	
-	if (isset($_POST['file_name']) && ($_POST['file_name'] != '')) {
-		$file_name = trim($_POST['file_name']);
-		$file_name = preg_replace('/ /','',$file_name);   // Remove spaces
-		$file_name = preg_replace('/\./','',$file_name);   // Remove periods
-
-		//  If string does not end in 'html', add '.html' at the end.
-
-		//  Standardize b4 search: if file name ends in 'htm', add an 'l'
-		if (preg_match('/htm$/i',$file_name)) {
-			$file_name .= 'l';
-		}
-		//  Now replace suffix delimiting period, removed above
-		if (preg_match('/html$/i',$file_name)) {
-			// preg_replace('/html/','.html',$file_name);  *** doesn't work!
-			$file_name = substr($file_name, 0, -4) . '.html';
-		} else {
-			$file_name .= '.html';
-		}
-	} else {
-		$file_name = "yourform.html";
-	}
+	$html_file = new File();
+	
+	$html_file->set_file_name($_POST['file_name']);
+	$file_name = $html_file->get_file_name();
 	
 	if (isset($_POST['HTMLtitle']) && ($_POST['HTMLtitle'] != '')) {
 		$HTMLtitle = trim($_POST['HTMLtitle']);

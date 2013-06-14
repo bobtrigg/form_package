@@ -5,28 +5,28 @@ class File {
 	protected $file_name;
 	protected $handle;
 	
-	function set_file_name() {
+	function set_file_name($file_name) {
 	
 		if (isset($_POST['file_name']) && ($_POST['file_name'] != '')) {
 		
-			$file_name = trim($_POST['file_name']);
-			$file_name = preg_replace('/ /','',$file_name);   // Remove spaces
-			$file_name = preg_replace('/\./','',$file_name);   // Remove periods
+			$this->file_name = trim($file_name);
+			$this->file_name = preg_replace('/ /','',$this->file_name);   // Remove spaces
+			$this->file_name = preg_replace('/\./','',$this->file_name);   // Remove periods
 
 			//  If string does not end in 'html', add '.html' at the end.
 
 			//  Standardize b4 search: if file name ends in 'htm', add an 'l'
-			if (preg_match('/htm$/i',$file_name)) {
-				$file_name .= 'l';
+			if (preg_match('/htm$/i',$this->file_name)) {
+				$this->file_name .= 'l';
 			}
 			//  Now replace suffix delimiting period, removed above
-			if (preg_match('/html$/i',$file_name)) {
-				$file_name = substr($file_name, 0, -4) . '.html';
+			if (preg_match('/html$/i',$this->file_name)) {
+				$this->file_name = substr($this->file_name, 0, -4) . '.html';
 			} else {
-				$file_name .= '.html';
+				$this->file_name .= '.html';
 			}
 		} else {
-			$file_name = "yourform.html";
+			$this->file_name = "yourform.html";
 		}
 	}
 	
