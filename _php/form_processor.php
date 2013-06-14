@@ -30,10 +30,8 @@
 
 date_default_timezone_set('America/Los_Angeles');
 
-require_once ('../_includes/file_names_inc.php');
+require_once("../_includes/base_pack.php");
 require_once ('../_includes/process_field.php');  // Includes function to process each field
-require_once("../_includes/functions.php");
-require_once("../_classes/json_class.php");
 
 $json_file = JSON_FILE;
 
