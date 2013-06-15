@@ -18,12 +18,14 @@ class Detail {
 	protected $text;
 	protected $type;
 	protected $full;
+	protected $stripped_name;
 	protected $complete_name;
 	
 	public function __construct($text, $type, $full) {
 		$this->text = $text;
 		$this->type = $type;
 		$this->full = $full;
+		$this->stripped_name = "";
 		$this->complete_name = "";
 	}
 	
@@ -46,6 +48,13 @@ class Detail {
 	}
 	public function get_full() {
 		return $this->full;
+	}
+	
+	public function set_stripped_name($stripped_name) {
+		$this->stripped_name = $stripped_name;
+	}
+	public function get_stripped_name() {
+		return $this->stripped_name;
 	}
 	
 	public function set_complete_name($complete_name) {

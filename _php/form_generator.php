@@ -133,11 +133,11 @@ if (isset($_POST['submitted'])) {
 			$detail_array[$i-1] = $html_form->create_line($detail_array[$i-1], $i, $html_file);
 			
 			//  If there was no data in the line, function returned false; otherwise, add to field list
-			if ($detail_array[$i-1]) {
+			if ($detail_array[$i-1] && $detail_array[$i-1]->get_type() == 'checkbox') {
 				$field_names .= "," . $detail_array[$i-1]->get_complete_name();
 			}
-
 		}
+		
 		if ($close_ul) {
 			$html_file->write_to_file("</ul>\n");
 		}
