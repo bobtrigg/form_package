@@ -18,11 +18,13 @@ class Detail {
 	protected $text;
 	protected $type;
 	protected $full;
+	protected $complete_name;
 	
 	public function __construct($text, $type, $full) {
 		$this->text = $text;
 		$this->type = $type;
 		$this->full = $full;
+		$this->complete_name = "";
 	}
 	
 	public function set_text($text) {
@@ -44,6 +46,13 @@ class Detail {
 	}
 	public function get_full() {
 		return $this->full;
+	}
+	
+	public function set_complete_name($complete_name) {
+		$this->complete_name = $complete_name;
+	}
+	public function get_complete_name() {
+		return $this->complete_name;
 	}
 }
 ?>

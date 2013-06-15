@@ -53,10 +53,6 @@ $json_object = new JSON_Data($json_file);
 
 list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = $json_object->get_json_data($json_file);
 
-//  Set flags to indicate when to create unordered lists
-$open_ul = true;
-$close_ul = false;
-
 //  Storage for individual line data
 //  Details of lines are stored in Detail objects.
 
@@ -66,9 +62,10 @@ for ($i=0;$i<$num_lines;$i++) {
 	$detail_array[$i] = new Detail("","checkbox",false);
 }
 
-//  Instantiate new File object
+//  Instantiate new File and Form objects
 
 $html_file = new File();
+$html_form = new Form();
 
 //  Process user-submitted data
 
@@ -133,58 +130,13 @@ if (isset($_POST['submitted'])) {
 		//  Write checkbox lines to html file
 		for ($i=1;$i<=$num_lines;$i++) {
 		
-			if (isset($_POST['line_text' . $i]) && ($_POST['line_text' . $i] != '')) {
+			$detail_array[$i-1] = $html_form->create_line($detail_array[$i-1], $i, $html_file);
 			
-				$name_str = $_POST['line_text' . $i];
-				$detail_array[$i-1]->set_text($name_str);
-
-				// Remove "bad characters", comma and space
-				$bad_chars = array(",", " ");
-				$stripped_name = str_replace($bad_chars, "", $name_str);
-
-				if (isset($_POST['line_type' . $i]) && $_POST['line_type' . $i] == 'category') {
-				
-					if ($close_ul) {
-						fwrite($handle, "</ul>\n");
-						$close_ul = false;
-					}
-				
-					$html_file->write_to_file("\n<p class=\"title\"><strong>" . $name_str . "</strong></p>\n");
-					$open_ul = true;
-					$cat_str = $stripped_name;
-					$detail_array[$i-1]->set_type('category');
-				
-				} else {
-				
-					if ($open_ul) {
-						$html_file->write_to_file("<ul>\n");
-						$open_ul = false;
-					}
-					$close_ul = true;
-				
-					if (isset($_POST['line_full' . $i]) && ($_POST['line_full' . $i] == 'on')) {
-						$class_val = "class=\"full\"";
-						$detail_array[$i-1]->set_full(true); 
-					} else {
-						$class_val = "";
-						$detail_array[$i-1]->set_full(false); 
-					}
-			
-					if ($cat_str != "") {
-						$complete_name = $cat_str . ":" . $stripped_name;
-					} else {
-						$complete_name = $stripped_name;
-					}
-			
-					$html_file->write_to_file("\n<li>\n");
-					$html_file->write_to_file("\t<input name=\"" . $complete_name . "\" type=\"checkbox\" " . $class_val . " id=\"" . $complete_name . "\">\n");
-					$html_file->write_to_file("\t<label for=\"" . $complete_name . "\">" . $name_str . "</label>\n");
-					$html_file->write_to_file("</li>\n");	
-					
-					$field_names .= "," . $complete_name;
-					$detail_array[$i-1]->set_type('checkbox');
-				}
+			//  If there was no data in the line, function returned false; otherwise, add to field list
+			if ($detail_array[$i-1]) {
+				$field_names .= "," . $detail_array[$i-1]->get_complete_name();
 			}
+
 		}
 		if ($close_ul) {
 			$html_file->write_to_file("</ul>\n");
