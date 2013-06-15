@@ -24,9 +24,46 @@ function set_num_lines() {
 	
 	return $num_lines;
 }
+function validate_input() {
 
+	$HTMLtitle = validate_title();
+	$form_header = validate_form_header();
+	$description = validate_desc();
+	
+	return array($HTMLtitle, $form_header, $description);
+}
+function validate_title() {
 
+	if (isset($_POST['HTMLtitle']) && ($_POST['HTMLtitle'] != '')) {
+		$HTMLtitle = trim($_POST['HTMLtitle']);
+		$HTMLtitle = preg_replace('/\\\\/','',$HTMLtitle);
+	} else {
+		$HTMLtitle = "Working title";
+	}
+	return $HTMLtitle;
+}
+function validate_form_header() {
+	
+	if (isset($_POST['form_header']) && ($_POST['form_header'] != '')) {
+		$form_header = trim($_POST['form_header']);
+		$form_header = preg_replace('/\\\\/','',$form_header);
+	} else {
+		$form_header = "Data input form";
+	}
+	return $form_header;
+}
+function validate_desc() {
 
-
-
+	
+	if (isset($_POST['description']) && ($_POST['description'] != '')) {
+		$description = trim(nl2br($_POST['description']));
+		//  Remove backslashes preceding a single quote
+		$description = preg_replace('/\\\\/','',$description);
+		//  Convert special characters to ampersand code:
+		// $description = htmlentities($description);
+	} else {
+		$description = " ";
+	}
+	return $description;
+}
 ?>

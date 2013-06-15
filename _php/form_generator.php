@@ -40,11 +40,10 @@ $header_file_name = HEADER_FILE;
 $contact_info_file = CONTACT_FILE;
 $json_file = JSON_FILE;
 
-$messages = array();
-
-//  Initialize form field values
+//  Initialize field values and misc variables
 $HTMLtitle = $form_header = $description = $submit_to = "";
 $field_names = "Name,Email,Phone";
+$messages = array();
 
 $num_lines = set_num_lines();
 
@@ -53,17 +52,13 @@ $json_object = new JSON_Data($json_file);
 
 list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = $json_object->get_json_data($json_file);
 
-//  Storage for individual line data
-//  Details of lines are stored in Detail objects.
-
+//  Create default detail lines: details of lines are stored in Detail objects.
 $detail_array = array();
-
 for ($i=0;$i<$num_lines;$i++) {
 	$detail_array[$i] = new Detail("","checkbox",false);
 }
 
 //  Instantiate new File and Form objects
-
 $html_file = new File();
 $html_form = new Form();
 
@@ -82,52 +77,15 @@ if (isset($_POST['submitted'])) {
 		}
 	}
 	
-	$html_file->set_file_name($_POST['file_name']);
-	
-	if (isset($_POST['HTMLtitle']) && ($_POST['HTMLtitle'] != '')) {
-		$HTMLtitle = trim($_POST['HTMLtitle']);
-		$HTMLtitle = preg_replace('/\\\\/','',$HTMLtitle);
-	} else {
-		$HTMLtitle = "Working title";
-	}
-	
-	if (isset($_POST['form_header']) && ($_POST['form_header'] != '')) {
-		$form_header = trim($_POST['form_header']);
-		$form_header = preg_replace('/\\\\/','',$form_header);
-	} else {
-		$form_header = "Data input form";
-	}
+	$html_file->set_file_name();
+	list ($HTMLtitle, $form_header, $description) = validate_input($HTMLtitle, $form_header, $description);
 
-	if (isset($_POST['description']) && ($_POST['description'] != '')) {
-		$description = trim(nl2br($_POST['description']));
-		//  Remove backslashes preceding a single quote
-		$description = preg_replace('/\\\\/','',$description);
-		//  Convert special characters to ampersand code:
-		// $description = htmlentities($description);
-	}
-	
 	if (!file_exists($html_file->get_file_name()) || (is_writable($html_file->get_file_name()))) {
 	
-		$html_file->open_file();
+		$html_file->create_head_section($HTMLtitle, $header_file_name);
+		$html_file->add_standard_content($form_header, $description, $contact_info_file);
 		
-		//  Create header in html file
-		$html_file->write_to_file("<!DOCTYPE html>\n<html lang='en'>\n<head>");
-		$html_file->write_to_file("<title>" . $HTMLtitle . "</title>");
-		$header_code = file_get_contents($header_file_name);
-		$html_file->write_to_file($header_code);
-		
-		//  Write header text from form into html file
-		$html_file->write_to_file("<h1><br>" . $form_header . "</h1>");
-		$html_file->write_to_file("<p class=\"clear\">&nbsp;</p>");
-
-		//  Write description text from form into html file
-		$html_file->write_to_file("<p>" . $description . "</p>");
-		
-		//  Write contact info fields into html file
-		$contact_info_fields = file_get_contents($contact_info_file);
-		$html_file->write_to_file($contact_info_fields);
-		
-		//  Write checkbox lines to html file
+		//  Write details lines (categories and checkboxes) to html file
 		for ($i=1;$i<=$num_lines;$i++) {
 		
 			$detail_array[$i-1] = $html_form->create_line($detail_array[$i-1], $i, $html_file);
@@ -138,27 +96,14 @@ if (isset($_POST['submitted'])) {
 			}
 		}
 		
-		if ($close_ul) {
-			$html_file->write_to_file("</ul>\n");
+		if (Form::$close_ul) {
+			$html_file->add_to_file_contents("</ul>\n");
 		}
 		
-		//  Create footer and close html file
+		$html_file->add_hidden_fields($html_file, $submit_to, $HTMLtitle, $field_names);
+		$html_file->add_to_file_contents(file_get_contents($footer_file_name));
 
-		if (isset($submit_to) && ($submit_to != '')) {
-			$write_line = "<input type=\"HIDDEN\" name=\"submit_to\" value=\"" . $submit_to . "\">\n";
-			$html_file->write_to_file($write_line);
-		}
-		$write_line = "<input type=\"HIDDEN\" name=\"form_id\" value=\"" . $HTMLtitle . "\">\n";
-		$html_file->write_to_file($write_line);
-		$write_line = "<input type=\"hidden\" name=\"Event\" id=\"Event\" value=\"" . $HTMLtitle . "\">\n";
-		$html_file->write_to_file($write_line);
-		
-		$write_line = "<input type=\"HIDDEN\" name=\"data_order\" value=\"" . $field_names . "\">\n";
-		$html_file->write_to_file($write_line);
-		
-		$footer_code = file_get_contents($footer_file_name);
-		$html_file->write_to_file($footer_code);
-		$html_file->close_file();
+		$html_file->create_file_from_content();
 		
 	} else {
 		echo "<h1>Copy failed</h1>";

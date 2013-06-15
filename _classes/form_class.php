@@ -13,23 +13,27 @@ class Form {
 	function process_category($html_file, $curr_dtl) {
 	
 		if (Form::$close_ul) {
-			$html_file->write_to_file("</ul>\n");
+			$html_file->add_to_file_contents("</ul>\n");
 			Form::$close_ul = false;
 		}
 	
-		$html_file->write_to_file("\n<p class=\"title\"><strong>" . $curr_dtl->get_text() . "</strong></p>\n");
+		$html_file->add_to_file_contents("\n<p class=\"title\"><strong>" . $curr_dtl->get_text() . "</strong></p>\n");
 		Form::$open_ul = true;
 		Form::$cat_str = $curr_dtl->get_stripped_name();
 		$curr_dtl->set_type('category');			
 	}
 
-	function process_checkbox($html_file, $curr_dtl, $line_ndx) {
+	function set_complete_name($curr_dtl){
 	
-		if (Form::$open_ul) {
-			$html_file->write_to_file("<ul>\n");
-			Form::$open_ul = false;
+		if (Form::$cat_str != "") {
+			$complete_name = Form::$cat_str . ":" . $curr_dtl->get_stripped_name();
+		} else {
+			$complete_name = $curr_dtl->get_stripped_name();
 		}
-		Form::$close_ul = true;
+		$curr_dtl->set_complete_name($complete_name);
+	}
+	
+	function set_full_status($curr_dtl, $line_ndx) {
 	
 		if (isset($_POST['line_full' . $line_ndx]) && ($_POST['line_full' . $line_ndx] == 'on')) {
 			$class_val = "class=\"full\"";
@@ -38,19 +42,30 @@ class Form {
 			$class_val = "";
 			$curr_dtl->set_full(false); 
 		}
-
-		if (Form::$cat_str != "") {
-			$complete_name = Form::$cat_str . ":" . $curr_dtl->get_stripped_name();
-		} else {
-			$complete_name = $curr_dtl->get_stripped_name();
-		}
-
-		$html_file->write_to_file("\n<li>\n");
-		$html_file->write_to_file("\t<input name=\"" . $complete_name . "\" type=\"checkbox\" " . $class_val . " id=\"" . $complete_name . "\">\n");
-		$html_file->write_to_file("\t<label for=\"" . $complete_name . "\">" . $curr_dtl->get_text() . "</label>\n");
-		$html_file->write_to_file("</li>\n");	
 		
-		$curr_dtl->set_complete_name($complete_name);
+		return $class_val;
+	}
+	
+	function write_checkbox_to_form($html_file, $curr_dtl, $line_ndx) {
+
+		$html_file->add_to_file_contents("\n<li>\n");
+		$html_file->add_to_file_contents("\t<input name=\"" . $curr_dtl->get_complete_name . "\" type=\"checkbox\" " . $this->set_full_status($curr_dtl, $line_ndx) . " id=\"" . $curr_dtl->get_complete_name . "\">\n");
+		$html_file->add_to_file_contents("\t<label for=\"" . $curr_dtl->get_complete_name . "\">" . $curr_dtl->get_text() . "</label>\n");
+		$html_file->add_to_file_contents("</li>\n");	
+	}
+
+	function process_checkbox($html_file, $curr_dtl, $line_ndx) {
+	
+		if (Form::$open_ul) {
+			$html_file->add_to_file_contents("<ul>\n");
+			Form::$open_ul = false;
+		}
+		Form::$close_ul = true;
+	
+		$this->set_complete_name($curr_dtl);
+		
+		$this->write_checkbox_to_form($html_file, $curr_dtl, $line_ndx);
+		
 		$curr_dtl->set_type('checkbox');
 	}
 	
