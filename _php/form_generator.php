@@ -30,7 +30,7 @@
 require_once("../_includes/base_pack.php");
 require_once("../_classes/detail_class.php");
 require_once("../_classes/form_class.php");
-require_once("../_classes/file_class.php");
+require_once("../_classes/formfile_class.php");
 require_once("../_includes/form_functions.php");
 
 //  Find boilerplate HTML saved in include files
@@ -58,8 +58,8 @@ for ($i=0;$i<$num_lines;$i++) {
 	$detail_array[$i] = new Detail("","checkbox",false);
 }
 
-//  Instantiate new File and Form objects
-$html_file = new File();
+//  Instantiate new Formfile and Form objects
+$html_file = new Formfile();
 $html_form = new Form();
 
 //  Process user-submitted data

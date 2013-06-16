@@ -77,8 +77,6 @@ if ((!isset($send_text_email) || ($send_text_email == '')) &&
 
 if (isset($send_text_email) && ($send_text_email != '')) {
 
-	$messages[] = "<h3>We are doing email</h3>";
-	
 	$e_recipient = $_POST['submit_to'];
 	$e_subject = "Data submitted via form " . $form_id;
 	$e_from = "From: admin@marinbike.org";
@@ -111,7 +109,6 @@ if (isset($data_file_name) && ($data_file_name != '')) {
 }	
 
 //  Put the fields to be reported into an array
-$messages[] = "<h3>field_names = " . $field_names . "</h3>";
 
 $field_name_array = explode(',',$field_names);
 $first_field = true;
