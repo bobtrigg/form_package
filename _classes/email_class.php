@@ -4,7 +4,14 @@ class Email {
 	protected $recipient;
 	protected $subject;
 	protected $from;
-	protected $body
+	protected $body;
+	
+	public function __construct($recipient, $subject, $from, $body) {
+		$this->recipient = $recipient;
+		$this->subject = $subject;
+		$this->from = $from;
+		$this->body = $body;
+	}
 
 	public function set_recipient($recipient) {
 		$this->recipient = $recipient;
@@ -33,7 +40,9 @@ class Email {
 	public function get_body() {
 		return $this->body;
 	}
-	
+	public function add_to_body($content) {
+		$this->body .= $content;
+	}
 
 }
 ?>

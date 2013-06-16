@@ -77,7 +77,7 @@ if (isset($_POST['submitted'])) {
 		}
 	}
 	
-	$html_file->set_file_name();
+	$html_file->set_form_file_name();
 	list ($HTMLtitle, $form_header, $description) = validate_input($HTMLtitle, $form_header, $description);
 
 	if (!file_exists($html_file->get_file_name()) || (is_writable($html_file->get_file_name()))) {

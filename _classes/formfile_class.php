@@ -3,7 +3,7 @@ require_once("../_classes/file_class.php");
 
 class Formfile extends File {
 
-	function set_file_name() {
+	function set_form_file_name() {
 	
 		if (isset($_POST['file_name']) && ($_POST['file_name'] != '')) {
 		

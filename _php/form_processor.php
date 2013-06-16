@@ -30,9 +30,13 @@
 
 date_default_timezone_set('America/Los_Angeles');
 $messages = array();
+// $messages[] = '<h3>return here</h3>'; Uncommenting this line will prevent redirection after processing
 
 require_once ('../_includes/process_field.php');  // Includes function to process each field
 require_once("../_includes/base_pack.php");
+require_once("../_classes/email_class.php");
+require_once("../_classes/datafile_class.php");
+
 $json_file = JSON_FILE;
 
 # grab JSON data. This data may be overwritten by form data; any fields w/out values from form will assume JSON data
@@ -77,13 +81,10 @@ if ((!isset($send_text_email) || ($send_text_email == '')) &&
 
 if (isset($send_text_email) && ($send_text_email != '')) {
 
-	$e_recipient = $_POST['submit_to'];
-	$e_subject = "Data submitted via form " . $form_id;
-	$e_from = "From: admin@marinbike.org";
-	$e_body = "";  // Need this set before processing individual fields!
+	$email = new Email($submit_to, "Data submitted via form " . $form_id, "From: admin@marinbike.org", "");
 	
 	if ($format == "JSON" || $format == "JavaScript") {
-		$e_body .= "{\n";
+		$email->add_to_body("{\n");
 	}	
 }
 	
@@ -92,19 +93,20 @@ if (isset($send_text_email) && ($send_text_email != '')) {
 
 if (isset($data_file_name) && ($data_file_name != '')) {
 
-	$messages[] = "<h3>We are doing a file</h3>";
-	if (!file_exists($data_file_name)) {
-		$handle = fopen($data_file_name,'a');
+	$datafile = new Datafile($data_file_name);
+
+	if (!file_exists($datafile->get_file_name())) {
+		$datafile->open_file('a');
 	} else {
 
-		if (is_writable($data_file_name)) {
-			$handle = fopen($data_file_name,'a');
-			fwrite($handle, "\n");
+		if (is_writable($datafile->get_file_name())) {
+			$datafile->open_file('a');
+			$datafile->add_to_file_contents("\n");
 		}	
 	}
-	fwrite($handle, "Data submitted at " . date("M j, Y, g:i A") . " PST from " . $form_id . "\n");
+	$datafile->add_to_file_contents("Data submitted at " . date("M j, Y, g:i A") . " PST from " . $form_id . "\n");
 	if ($format == "JSON" || $format == "JavaScript") {
-		fwrite($handle, "{\n");
+		$datafile->add_to_file_contents("{\n");
 	}
 }	
 
@@ -116,10 +118,10 @@ $first_field = true;
 foreach ($field_name_array as $field) { 
 
 	if ($send_text_email) {
-		add_to_email($field,$first_field,$format,$delimiter);	
+		add_to_email($email,$field,$first_field,$format,$delimiter);	
 	} 
 	if ($append_to_file) {
-		add_to_text_file($field,$handle,$first_field,$format,$delimiter);	
+		add_to_text_file($datafile,$field,$first_field,$format,$delimiter);	
 	}
 	$first_field = false;
 }
@@ -129,22 +131,20 @@ foreach ($field_name_array as $field) {
 if ((isset($send_text_email) && ($send_text_email != ''))) {
 
 	if ($format == "JSON" || $format == "JavaScript") {
-		$e_body .= "\n}\n";
+		$email->add_to_body("\n}\n");
 	}	
 
-	//  This line adds content which can be used to identify the message as not spam
-	if (!in_array('spamprotector',$field_name_array)) {
-		$e_body .= "spamprotector = fromwebformviawebhost\n";
-	}
-
-	mail($e_recipient, $e_subject, $e_body, $e_from);
+	mail($email->get_recipient(), $email->get_subject(), $email->get_body(), $email->get_from());
 }
+
+//  Data file is requested
 
 if (isset($data_file_name) && ($data_file_name != '')) {
 	if ($format == "JSON" || $format == "JavaScript") {
-		fwrite($handle, "\n}\n");
+		$datafile->add_to_file_contents("\n}\n");
 	}
-	fclose($handle);
+	$datafile->write_to_file($datafile->get_contents());
+	$datafile->close_file();
 }
 
 //  Go to the new URL indicated in the form's code. Stay here if URL is unspecified.
@@ -179,7 +179,7 @@ if (isset($ok_url) && ($ok_url != '') && empty($messages)) {
 	}
 ?>
 
-<?php //echo $e_body; ?>
+<?php //echo $email->get_body(); ?>
 
 <?php
 	if ((isset($send_text_email) && ($send_text_email != ''))) {

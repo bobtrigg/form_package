@@ -5,29 +5,27 @@
 # The function's single parameter is the name of the field to be processed.
 # Function uses the field name to retrieve the value from $_POST
 ################################################################################
-function add_to_email($field_name,$first_field,$format="delim",$delimiter=",") {
+function add_to_email($email,$field_name,$first_field,$format="delim",$delimiter=",") {
 
-	global $e_body;
-	
 	$field_value = $_POST[$field_name];
 	
 	switch ($format) {
 		case "JSON":
 		case "JavaScript":
 			if (!$first_field) {
-				$e_body .= ",\n";
+				$email->add_to_body(",\n");
 			}
 			$name_value_pair = '"' . $field_name . '" : "' . $field_value . '"';
-			$e_body .=  $name_value_pair;
+			$email->add_to_body($name_value_pair);
 			break;
 		case "delim":
 		default:
 			$name_value_pair = $field_name . $delimiter . $field_value . "\n";
-			$e_body .=  $name_value_pair;
+			$email->add_to_body($name_value_pair);
 	}
 }
 
-function add_to_text_file($field_name,$handle,$first_field,$format="delim",$delimiter=",") {	
+function add_to_text_file($datafile,$field_name,$first_field,$format="delim",$delimiter=",") {	
 
 	$messages[] = "adding " . $field_name . " to data file.";
 	$field_value = $_POST[$field_name];
@@ -38,15 +36,15 @@ function add_to_text_file($field_name,$handle,$first_field,$format="delim",$deli
 		case "JSON":
 		case "JavaScript":
 			if (!$first_field) {
-				fwrite($handle,",\n");
+				$datafile->add_to_file_contents(",\n");
 			}
 			$name_value_pair = '"' . $field_name . '" : "' . $field_value . '"';
-			fwrite($handle, $name_value_pair);
+			$datafile->add_to_file_contents($name_value_pair);
 			break;
 		case "delim":
 		default:
 			$name_value_pair = $field_name . $delimiter . $field_value . "\n";
-			fwrite($handle, $name_value_pair);
+			$datafile->add_to_file_contents($name_value_pair);
 	}
 }
 ?>
