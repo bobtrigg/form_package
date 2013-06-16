@@ -13,10 +13,6 @@ class Email {
 		$this->body = $body;
 	}
 
-
-	public function send_mail() {
-		mail($this->get_recipient(), $this->get_subject(), $this->get_body(), $this->get_from());
-	}
 	public function set_recipient($recipient) {
 		$this->recipient = $recipient;
 	}
