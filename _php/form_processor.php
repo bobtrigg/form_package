@@ -29,10 +29,10 @@
 ###############################################################################
 
 date_default_timezone_set('America/Los_Angeles');
+$messages = array();
 
-require_once("../_includes/base_pack.php");
 require_once ('../_includes/process_field.php');  // Includes function to process each field
-
+require_once("../_includes/base_pack.php");
 $json_file = JSON_FILE;
 
 # grab JSON data. This data may be overwritten by form data; any fields w/out values from form will assume JSON data
@@ -61,7 +61,7 @@ if (!isset($not_ok_url) || ($not_ok_url == '')) {
 	$not_ok_url = $_SERVER['HTTP_REFERER'];
 }
 
-// If there is not reporting method chosen: 
+// If there is no reporting method chosen: 
 if ((!isset($send_text_email) || ($send_text_email == '')) &&
     (!isset($append_to_file)  || ($append_to_file == '')))    {
 	
@@ -76,6 +76,8 @@ if ((!isset($send_text_email) || ($send_text_email == '')) &&
 // Set up email fields if email is requested
 
 if (isset($send_text_email) && ($send_text_email != '')) {
+
+	$messages[] = "<h3>We are doing email</h3>";
 	
 	$e_recipient = $_POST['submit_to'];
 	$e_subject = "Data submitted via form " . $form_id;
@@ -92,6 +94,7 @@ if (isset($send_text_email) && ($send_text_email != '')) {
 
 if (isset($data_file_name) && ($data_file_name != '')) {
 
+	$messages[] = "<h3>We are doing a file</h3>";
 	if (!file_exists($data_file_name)) {
 		$handle = fopen($data_file_name,'a');
 	} else {
@@ -108,11 +111,19 @@ if (isset($data_file_name) && ($data_file_name != '')) {
 }	
 
 //  Put the fields to be reported into an array
+$messages[] = "<h3>field_names = " . $field_names . "</h3>";
+
 $field_name_array = explode(',',$field_names);
 $first_field = true;
 
-foreach ($field_name_array as $field) {    //  Call function to do the dirty work...
-	process_field($field,$send_text_email,$append_to_file,$handle,$first_field,$format,$delimiter);
+foreach ($field_name_array as $field) { 
+
+	if ($send_text_email) {
+		add_to_email($field,$first_field,$format,$delimiter);	
+	} 
+	if ($append_to_file) {
+		add_to_text_file($field,$handle,$first_field,$format,$delimiter);	
+	}
 	$first_field = false;
 }
 
@@ -141,7 +152,7 @@ if (isset($data_file_name) && ($data_file_name != '')) {
 
 //  Go to the new URL indicated in the form's code. Stay here if URL is unspecified.
 
-if (isset($ok_url) && ($ok_url != '')) {
+if (isset($ok_url) && ($ok_url != '') && empty($messages)) {
 	if (!headers_sent($filename, $linenum)) {
 		header("Location: " . $ok_url);
 		exit();
@@ -158,6 +169,19 @@ if (isset($ok_url) && ($ok_url != '')) {
 </head>
 <body>
 <h1>Your form data has been accepted and processed.</h1>
+
+<?php
+	if (!empty($messages)) {
+
+		echo "<p>";
+		
+		foreach ($messages as $msg) {
+			echo "<strong>$msg</strong><br>\n";
+		}
+		echo "</p>\n";
+	}
+?>
+
 <?php //echo $e_body; ?>
 
 <?php

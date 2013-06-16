@@ -49,8 +49,8 @@ class Form {
 	function write_checkbox_to_form($html_file, $curr_dtl, $line_ndx) {
 
 		$html_file->add_to_file_contents("\n<li>\n");
-		$html_file->add_to_file_contents("\t<input name=\"" . $curr_dtl->get_complete_name . "\" type=\"checkbox\" " . $this->set_full_status($curr_dtl, $line_ndx) . " id=\"" . $curr_dtl->get_complete_name . "\">\n");
-		$html_file->add_to_file_contents("\t<label for=\"" . $curr_dtl->get_complete_name . "\">" . $curr_dtl->get_text() . "</label>\n");
+		$html_file->add_to_file_contents("\t<input name=\"" . $curr_dtl->get_complete_name() . "\" type=\"checkbox\" " . $this->set_full_status($curr_dtl, $line_ndx) . " id=\"" . $curr_dtl->get_complete_name() . "\">\n");
+		$html_file->add_to_file_contents("\t<label for=\"" . $curr_dtl->get_complete_name() . "\">" . $curr_dtl->get_text() . "</label>\n");
 		$html_file->add_to_file_contents("</li>\n");	
 	}
 
