@@ -13,6 +13,13 @@ class Email {
 		$this->body = $body;
 	}
 
+	public function add_to_body($content) {
+		$this->body .= $content;
+	}
+	public function send_mail(){
+		mail($this->get_recipient(), $this->get_subject(), $this->get_body(), $this->get_from());
+	}
+	
 	public function set_recipient($recipient) {
 		$this->recipient = $recipient;
 	}
@@ -39,9 +46,6 @@ class Email {
 	}
 	public function get_body() {
 		return $this->body;
-	}
-	public function add_to_body($content) {
-		$this->body .= $content;
 	}
 
 }

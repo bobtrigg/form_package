@@ -9,6 +9,6 @@ form.css is specifically for the scripts included in this package. genform.css i
 
 form_processor.js is used with generated forms to guarantee the inclusion and accuracy of required hidden files such as the field names and the data recipients email URL. set_visibility.js is a short file which manages the visibility of some fields in form_processor_init.php which are conditionally required depending on the values of other fields.
 
-The data structure in the package should be maintained. You should have four sibling folders, _php, _js, _css, _includes, and _json. The _json folder contains only the JSON defaults file, which the scripts create if it does not exist.
+The data structure in the package should be maintained. You should have six sibling folders, _php, _js, _css, _includes, _classes, and _json. The _json folder contains only the JSON defaults file, which the scripts create if it does not exist.
 
 This software is offered free of charge, and can be edited in any way necessary in your programming environment. Author assumes no responsibility for its performance. However, questions about the package and change requests can be addressed to bobtrigg94930@gmail.com.

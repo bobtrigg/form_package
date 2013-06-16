@@ -53,11 +53,11 @@ class Formfile extends File {
 	function add_hidden_fields($html_file, $submit_to, $HTMLtitle, $field_names) {
 
 		if (isset($submit_to) && ($submit_to != '')) {
-			$html_file->add_to_file_contents("<input type=\"HIDDEN\" name=\"submit_to\" value=\"" . $submit_to . "\">\n");
+			$html_file->add_to_file_contents("<input type=\"hidden\" name=\"submit_to\" value=\"" . $submit_to . "\">\n");
 		}
-		$html_file->add_to_file_contents("<input type=\"HIDDEN\" name=\"form_id\" value=\"" . $HTMLtitle . "\">\n");
+		$html_file->add_to_file_contents("<input type=\"hidden\" name=\"form_id\" value=\"" . $HTMLtitle . "\">\n");
 		$html_file->add_to_file_contents("<input type=\"hidden\" name=\"Event\" id=\"Event\" value=\"" . $HTMLtitle . "\">\n");
-		$html_file->add_to_file_contents("<input type=\"HIDDEN\" name=\"data_order\" value=\"" . $field_names . "\">\n");
+		$html_file->add_to_file_contents("<input type=\"hidden\" name=\"data_order\" value=\"" . $field_names . "\">\n");
 	}
 }
 ?>
