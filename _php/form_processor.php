@@ -4,7 +4,7 @@
 #  Created April, 2013 by Bob Trigg
 
 #  This script accepts user-entered data from a web form and
-#  reports data by sending email and/or appending to a data file.
+#  reports the data by sending an email and/or appending to a data file.
 #  The data file can be created in one of several formats: JSON,
 #  JavaScript array, or delimited.
 
@@ -14,9 +14,9 @@
 #  and sets up the list of data fields in the form.
 	
 #  The following input data are expected, either from the form
-#  or from a default file: the email recipient, the field
-#  list, the name of the form, URLs for success and failure,
-#  and the reporting methods (files or email).
+#  or from a default file: the email recipient (if email is to be sent),
+#  the field list, the name of the form, URLs for success and failure,
+#  and the reporting methods (file or email).
 
 #  Default values: 
 #  The reporting method, if unspecified, defaults to email, 
@@ -30,17 +30,17 @@
 
 date_default_timezone_set('America/Los_Angeles');
 $messages = array();
-// $messages[] = '<h3>return here</h3>'; Uncommenting this line will prevent redirection after processing
+// Uncommenting the following line will prevent redirection after processing
+// $messages[] = '<h3>return here</h3>'; 
 
-require_once ('../_includes/process_field.php');  // Includes function to process each field
+require_once("../_includes/processor_functions.php");  // Includes function to process each field
 require_once("../_includes/base_pack.php");
 require_once("../_classes/email_class.php");
 require_once("../_classes/datafile_class.php");
 
-$json_file = JSON_FILE;
-
 # grab JSON data. This data may be overwritten by form data; any fields w/out values from form will assume JSON data
 
+$json_file = JSON_FILE;
 $json_object = new JSON_Data($json_file);
 
 list($submit_to, $form_id, $ok_url, $not_ok_url, $send_text_email, $append_to_file, $data_file_name, $format, $delimiter) = $json_object->get_json_data($json_file);
@@ -53,31 +53,11 @@ $ok_url = set_field('ok_url',$ok_url);
 $not_ok_url = set_field('not_ok_url',$not_ok_url);
 $form_id = set_field('form_id',$form_id);
 
-####  Ready to rock! Start the data validation...
+####  Ready to rock! Do some data validation:
 
-// if no form ID, use form page's URL.
-if (!isset($form_id) || ($form_id == '')) {
-	$form_id = $_SERVER['HTTP_REFERER'];
-}
+list($form_id,$not_ok_url,$send_text_email,$append_to_file, $data_file_name) = validate_data($submit_to,$form_id,$not_ok_url,$send_text_email,$append_to_file, $data_file_name);
 
-// if no not_ok_url, use form page's URL
-if (!isset($not_ok_url) || ($not_ok_url == '')) {
-	$not_ok_url = $_SERVER['HTTP_REFERER'];
-}
-
-// If there is no reporting method chosen: 
-if ((!isset($send_text_email) || ($send_text_email == '')) &&
-    (!isset($append_to_file)  || ($append_to_file == '')))    {
-	
-	// if there's an email recipient set up, send a text email; otherwise, append to file.
-	if (isset($submit_to) && ($submit_to != '')) {
-		$send_text_email = 'Y';
-	} else {
-		$append_to_file = 'Y';
-	}
-}
-
-// Set up email fields if email is requested
+# Set up email fields if email is requested
 
 if (isset($send_text_email) && ($send_text_email != '')) {
 
@@ -88,29 +68,16 @@ if (isset($send_text_email) && ($send_text_email != '')) {
 	}	
 }
 	
-// Set up file if file is requested.
-// Assume $data_file_name was set if needed during parm checking.
+# Set up file if file is requested.
+# Assume $data_file_name was set if needed during parm checking.
 
 if (isset($data_file_name) && ($data_file_name != '')) {
 
 	$datafile = new Datafile($data_file_name);
-
-	if (!file_exists($datafile->get_file_name())) {
-		$datafile->open_file('a');
-	} else {
-
-		if (is_writable($datafile->get_file_name())) {
-			$datafile->open_file('a');
-			$datafile->add_to_file_contents("\n");
-		}	
-	}
-	$datafile->add_to_file_contents("Data submitted at " . date("M j, Y, g:i A") . " PST from " . $form_id . "\n");
-	if ($format == "JSON" || $format == "JavaScript") {
-		$datafile->add_to_file_contents("{\n");
-	}
+	$datafile->prep_file($format, $form_id);
 }	
 
-//  Put the fields to be reported into an array
+#  Put the fields to be reported into an array
 
 $field_name_array = explode(',',$field_names);
 $first_field = true;
@@ -126,18 +93,17 @@ foreach ($field_name_array as $field) {
 	$first_field = false;
 }
 
-//  Send email if requested
+#  Send email if requested; fire it off
 	
 if ((isset($send_text_email) && ($send_text_email != ''))) {
 
 	if ($format == "JSON" || $format == "JavaScript") {
 		$email->add_to_body("\n}\n");
-	}	
-
-	mail($email->get_recipient(), $email->get_subject(), $email->get_body(), $email->get_from());
+	}
+	$email->send_mail();
 }
 
-//  Data file is requested
+#  Data file is requested; write it
 
 if (isset($data_file_name) && ($data_file_name != '')) {
 	if ($format == "JSON" || $format == "JavaScript") {
@@ -147,7 +113,7 @@ if (isset($data_file_name) && ($data_file_name != '')) {
 	$datafile->close_file();
 }
 
-//  Go to the new URL indicated in the form's code. Stay here if URL is unspecified.
+#  Go to the new URL indicated in the form's code. Stay here if URL is unspecified.
 
 if (isset($ok_url) && ($ok_url != '') && empty($messages)) {
 	if (!headers_sent($filename, $linenum)) {
