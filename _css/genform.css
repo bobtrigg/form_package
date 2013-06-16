@@ -60,7 +60,7 @@ input[type="text"], input[type="email"], textarea {
 	width:200px;
 	width:80%;
 	min-width:200px;
-	margin: 10px 0 15px 45px;
+	margin: 10px 0 15px 20px;
 	border:1px solid #888;
 
 	-webkit-border-radius:7px;
@@ -106,7 +106,7 @@ input[type="text"], input[type="email"], textarea {
 
 /*  Align form elements horizontally  */
 label {
-	margin: 0 0 15px 45px;
+	margin: 0 0 15px 20px;
 }
 /*  --------------------------------  */
 div.checkbox, input[type="radio"] {
